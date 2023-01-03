@@ -81,6 +81,23 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {
+    updateSim();
+  }
+
+  @Override
+  public void disabledInit() {
+  }
+
+  @Override
+  public void disabledPeriodic() {
+    // Stop the robot when disabled.
+    m_drive.drive(0.0, 0.0);
+
+    updateSim();
+  }
+
+  private void updateSim() {
+    // Update the odometry in the sim.
     m_drive.simulationPeriodic();
     m_field.setRobotPose(m_drive.getPose());
   }
