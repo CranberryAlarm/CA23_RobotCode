@@ -13,8 +13,8 @@
   "Window": {
     "###/SmartDashboard/Field": {
       "Collapsed": "0",
-      "Pos": "251,500",
-      "Size": "655,362"
+      "Pos": "207,83",
+      "Size": "785,421"
     },
     "###FMS": {
       "Collapsed": "0",
@@ -22,12 +22,12 @@
       "Size": "235,169"
     },
     "###Joysticks": {
-      "Collapsed": "0",
-      "Pos": "207,283",
+      "Collapsed": "1",
+      "Pos": "206,62",
       "Size": "796,206"
     },
     "###NetworkTables": {
-      "Collapsed": "0",
+      "Collapsed": "1",
       "Pos": "206,44",
       "Size": "750,230"
     },

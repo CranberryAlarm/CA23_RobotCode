@@ -14,14 +14,14 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.controls.FilteredController;
 
 import java.util.List;
 
 public class Robot extends TimedRobot {
-  private final XboxController m_controller = new XboxController(0);
+  private final FilteredController m_controller = new FilteredController(0, true, true);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_speedLimiter = new SlewRateLimiter(3);
@@ -36,8 +36,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    // Set up the Field2d object
     SmartDashboard.putData("Field", m_field);
 
+    // Calculate the trajectory for auto
     m_trajectory = TrajectoryGenerator.generateTrajectory(
         new Pose2d(2, 2, new Rotation2d()),
         List.of(),
@@ -69,13 +71,13 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
-    double xSpeed = -m_speedLimiter.calculate(m_controller.getRawAxis(1)) * Drivetrain.kMaxSpeed;
+    double xSpeed = -m_speedLimiter.calculate(m_controller.getFilteredAxis(1)) * Drivetrain.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    double rot = -m_rotLimiter.calculate(m_controller.getRawAxis(2)) * Drivetrain.kMaxAngularSpeed;
+    double rot = -m_rotLimiter.calculate(m_controller.getFilteredAxis(2)) * Drivetrain.kMaxAngularSpeed;
     m_drive.drive(xSpeed, rot);
   }
 
