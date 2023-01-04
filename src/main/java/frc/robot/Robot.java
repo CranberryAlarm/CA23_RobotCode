@@ -6,12 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -24,7 +20,6 @@ import frc.robot.controls.FilteredController;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
 
 public class Robot extends TimedRobot {
   private final FilteredController m_controller = new FilteredController(0, true, true);
