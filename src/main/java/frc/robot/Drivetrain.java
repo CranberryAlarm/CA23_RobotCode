@@ -125,7 +125,7 @@ public class Drivetrain {
     m_leftEncoder.reset();
     m_rightEncoder.reset();
     m_drivetrainSimulator.setPose(pose);
-    m_odometry.resetPosition(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);
+    m_odometry.resetPosition(pose.getRotation(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);
   }
 
   /** Check the current robot pose. */

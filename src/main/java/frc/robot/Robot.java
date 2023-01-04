@@ -44,15 +44,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    // Set up the Field2d object
+    // Set up the Field2d object for simulation
     SmartDashboard.putData("Field", m_field);
-
-    // Calculate the static trajectory for auto
-    // m_trajectory = TrajectoryGenerator.generateTrajectory(
-    // new Pose2d(2, 2, new Rotation2d()),
-    // List.of(),
-    // new Pose2d(6, 4, new Rotation2d()),
-    // new TrajectoryConfig(2, 2));
 
     // Use the pathweaver trajectory
     try {
