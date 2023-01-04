@@ -29,6 +29,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Drivetrain {
   // 3 meters per second.
   public static final double kMaxSpeed = 3.0;
+
+  // 3 meters per second.
+  public static final double kMaxAcceleration = 3.0;
+
   // 1/2 rotation per second.
   public static final double kMaxAngularSpeed = Math.PI;
 

@@ -12,12 +12,18 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controls.FilteredController;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 public class Robot extends TimedRobot {
@@ -30,6 +36,8 @@ public class Robot extends TimedRobot {
   private final Drivetrain m_drive = new Drivetrain();
   private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
+
+  private final String trajectoryJSON = "Back-up.wpilib.json";
   private Trajectory m_trajectory;
 
   private final Field2d m_field = new Field2d();
@@ -39,12 +47,32 @@ public class Robot extends TimedRobot {
     // Set up the Field2d object
     SmartDashboard.putData("Field", m_field);
 
-    // Calculate the trajectory for auto
-    m_trajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(2, 2, new Rotation2d()),
-        List.of(),
-        new Pose2d(6, 4, new Rotation2d()),
-        new TrajectoryConfig(2, 2));
+    // Calculate the static trajectory for auto
+    // m_trajectory = TrajectoryGenerator.generateTrajectory(
+    // new Pose2d(2, 2, new Rotation2d()),
+    // List.of(),
+    // new Pose2d(6, 4, new Rotation2d()),
+    // new TrajectoryConfig(2, 2));
+
+    // Use the pathweaver trajectory
+    try {
+      Path trajectoryPath = null;
+
+      if (RobotBase.isReal()) {
+        System.out.println("Running on the robot!");
+        trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve("paths/" + trajectoryJSON);
+      } else {
+        System.out.println("Running in simulation!");
+        trajectoryPath = Filesystem.getLaunchDirectory().toPath().resolve("PathWeaver/output/" + trajectoryJSON);
+      }
+
+      m_trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+
+      m_field.getObject("traj").setTrajectory(m_trajectory);
+
+    } catch (IOException ex) {
+      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+    }
   }
 
   @Override
@@ -56,7 +84,9 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_timer.reset();
     m_timer.start();
+
     m_drive.resetOdometry(m_trajectory.getInitialPose());
+    m_field.setRobotPose(m_trajectory.getInitialPose());
   }
 
   @Override

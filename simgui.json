@@ -18,7 +18,17 @@
     },
     "windows": {
       "/SmartDashboard/Field": {
+        "traj": {
+          "arrowSize": 16,
+          "arrowWeight": 2.0,
+          "arrows": false,
+          "selectable": false,
+          "style": "Line",
+          "weight": 3.0
+        },
+        "units": "feet",
         "window": {
+          "name": "Field",
           "visible": true
         }
       }
