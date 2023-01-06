@@ -55,10 +55,15 @@ public class Drivetrain {
   private final PIDController m_rightPIDController = new PIDController(8.5, 0, 0);
 
   private final AnalogGyro m_gyro = new AnalogGyro(0);
+  private final Pose2d m_pose = new Pose2d(m_leftEncoder.getDistance(), m_rightEncoder.getDistance(),
+      m_gyro.getRotation2d());
 
   private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
-  private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(),
-      m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+  private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_pose);
+  // TODO: 2023 version
+  // private final DifferentialDriveOdometry m_odometry = new
+  // DifferentialDriveOdometry(m_gyro.getRotation2d(),
+  // m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
@@ -124,7 +129,11 @@ public class Drivetrain {
     m_leftEncoder.reset();
     m_rightEncoder.reset();
     m_drivetrainSimulator.setPose(pose);
-    m_odometry.resetPosition(pose.getRotation(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);
+
+    m_odometry.resetPosition(pose, pose.getRotation());
+    // TODO: 2023 version
+    // m_odometry.resetPosition(pose.getRotation(), m_leftEncoder.getDistance(),
+    // m_rightEncoder.getDistance(), pose);
   }
 
   /** Check the current robot pose. */
