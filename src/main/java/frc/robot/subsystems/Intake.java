@@ -1,22 +1,15 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.hal.SimBoolean;
-import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants;
+import frc.robot.simulation.SimulatableCANSparkMax;
 
 public class Intake extends Subsystem {
-  // Simulation devices
-  SimDeviceSim mIntakeMasterSim;
-  SimDouble mIntakeMasterSimAppliedOutput;
-
   private static final double kIntakePower = 0.75;
   private static final double kLightIntakePower = 0.25;
   private static final double kExhaustPower = -0.75;
@@ -31,12 +24,12 @@ public class Intake extends Subsystem {
     return mInstance;
   }
 
-  private CANSparkMax mIntakeMaster;
+  private SimulatableCANSparkMax mIntakeMaster;
   private DoubleSolenoid mIntakeSolenoid;
   private PeriodicIO mPeriodicIO = new PeriodicIO();
 
   private Intake() {
-    mIntakeMaster = new CANSparkMax(Constants.kIntakeMasterId, MotorType.kBrushless);
+    mIntakeMaster = new SimulatableCANSparkMax(Constants.kIntakeMasterId, MotorType.kBrushless);
     mIntakeMaster.setInverted(true);
 
     mIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.kIntakeSolenoidForwardId,
@@ -45,10 +38,6 @@ public class Intake extends Subsystem {
     mPeriodicIO = new PeriodicIO();
 
     isStowed = true;
-
-    // Setup simulation things
-    mIntakeMasterSim = new SimDeviceSim("SPARK MAX ", Constants.kIntakeMasterId);
-    mIntakeMasterSimAppliedOutput = mIntakeMasterSim.getDouble("Applied Output");
   }
 
   public enum WantedState {
@@ -126,7 +115,6 @@ public class Intake extends Subsystem {
   @Override
   public void writePeriodicOutputs() {
     mIntakeMaster.set(mPeriodicIO.motor_power);
-    mIntakeMasterSimAppliedOutput.set(mPeriodicIO.motor_power);
   }
 
   @Override
