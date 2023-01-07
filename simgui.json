@@ -27,7 +27,7 @@
       "/SmartDashboard/Field": {
         "bottom": 900,
         "height": 8.229599952697754,
-        "image": "C:\\Users\\dracc\\Documents\\github\\CA23_RobotCode\\PathWeaver\\fields\\2022-field.png",
+        "image": "PathWeaver/fields/2022-field.png",
         "left": 74,
         "right": 1774,
         "top": 50,
