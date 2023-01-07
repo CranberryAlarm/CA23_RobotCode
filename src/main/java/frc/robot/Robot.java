@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import edu.wpi.first.math.controller.RamseteController;
@@ -16,20 +12,25 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.controls.FilteredController;
+import frc.robot.controls.controllers.DriverController;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
 public class Robot extends TimedRobot {
-  private final FilteredController m_controller = new FilteredController(0, true, true);
+  private final DriverController m_driverController = new DriverController(0, true, true);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_speedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
+  // Robot subsystems
   private final Drivetrain m_drive = new Drivetrain();
+  private final Intake m_intake = Intake.getInstance();
+
+  //
   private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
 
@@ -67,6 +68,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     m_drive.periodic();
+    m_intake.periodic();
   }
 
   @Override
@@ -90,14 +92,23 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
-    double xSpeed = -m_speedLimiter.calculate(m_controller.getFilteredAxis(1)) * Drivetrain.kMaxSpeed;
+    double xSpeed = -m_speedLimiter.calculate(m_driverController.getFilteredAxis(1)) * Drivetrain.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    double rot = -m_rotLimiter.calculate(m_controller.getFilteredAxis(2)) * Drivetrain.kMaxAngularSpeed;
+    double rot = -m_rotLimiter.calculate(m_driverController.getFilteredAxis(2)) * Drivetrain.kMaxAngularSpeed;
     m_drive.drive(xSpeed, rot);
+
+    // Intake controls
+    if (m_driverController.getWantsIntake()) {
+      m_intake.setSystemState(Intake.SystemState.INTAKING);
+    } else if (m_driverController.getWantsExhaust()) {
+      m_intake.setSystemState(Intake.SystemState.EXHAUSTING);
+    } else {
+      m_intake.setSystemState(Intake.SystemState.IDLE);
+    }
   }
 
   @Override

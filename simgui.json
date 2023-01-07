@@ -5,6 +5,11 @@
         "header": {
           "open": true
         }
+      },
+      "SPARK MAX [10]": {
+        "header": {
+          "open": true
+        }
       }
     }
   },
@@ -20,6 +25,12 @@
     },
     "windows": {
       "/SmartDashboard/Field": {
+        "bottom": 900,
+        "height": 8.229599952697754,
+        "image": "C:\\Users\\dracc\\Documents\\github\\CA23_RobotCode\\PathWeaver\\fields\\2022-field.png",
+        "left": 74,
+        "right": 1774,
+        "top": 50,
         "traj": {
           "arrowSize": 16,
           "arrowWeight": 2.0,
@@ -29,6 +40,7 @@
           "weight": 3.0
         },
         "units": "feet",
+        "width": 16.459199905395508,
         "window": {
           "name": "Field",
           "visible": true

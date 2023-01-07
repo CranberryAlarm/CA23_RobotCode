@@ -1,6 +1,8 @@
-package frc.robot.controls;
+package frc.robot.controls.controllers;
 
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.controls.Deadband;
+import frc.robot.controls.SquaredInput;
 
 public class FilteredController extends XboxController {
   private static final double DEADBAND_LIMIT = 0.01;
