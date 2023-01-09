@@ -20,12 +20,12 @@ import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.simulation.SimulatableCANSparkMax;
 
 public class Drivetrain {
@@ -42,10 +42,14 @@ public class Drivetrain {
   private static final double kWheelRadius = 0.0508;
   private static final int kEncoderResolution = -4096;
 
-  private final SimulatableCANSparkMax m_leftLeader = new SimulatableCANSparkMax(7, MotorType.kBrushless);
-  private final PWMSparkMax m_leftFollower = new PWMSparkMax(2);
-  private final PWMSparkMax m_rightLeader = new PWMSparkMax(3);
-  private final PWMSparkMax m_rightFollower = new PWMSparkMax(4);
+  private final SimulatableCANSparkMax m_leftLeader = new SimulatableCANSparkMax(Constants.kDrivetrainFLMotorId,
+      MotorType.kBrushless);
+  private final SimulatableCANSparkMax m_leftFollower = new SimulatableCANSparkMax(Constants.kDrivetrainBLMotorId,
+      MotorType.kBrushless);
+  private final SimulatableCANSparkMax m_rightLeader = new SimulatableCANSparkMax(Constants.kDrivetrainFRMotorId,
+      MotorType.kBrushless);
+  private final SimulatableCANSparkMax m_rightFollower = new SimulatableCANSparkMax(Constants.kDrivetrainBRMotorId,
+      MotorType.kBrushless);
 
   private final MotorControllerGroup m_leftGroup = new MotorControllerGroup(m_leftLeader, m_leftFollower);
   private final MotorControllerGroup m_rightGroup = new MotorControllerGroup(m_rightLeader, m_rightFollower);

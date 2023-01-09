@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -26,6 +27,7 @@ public class Robot extends TimedRobot {
 
   // Robot subsystems
   private final Drivetrain m_drive = new Drivetrain();
+  private final Elevator m_elevator = Elevator.getInstance();
   // private final Intake m_intake = Intake.getInstance();
 
   //
@@ -91,7 +93,6 @@ public class Robot extends TimedRobot {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     double xSpeed = -m_speedLimiter.calculate(m_driverController.getFilteredAxis(1)) * Drivetrain.kMaxSpeed;
-    System.out.println(m_driverController.getFilteredAxis(1));
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
@@ -108,6 +109,25 @@ public class Robot extends TimedRobot {
     // } else {
     // m_intake.setSystemState(Intake.SystemState.IDLE);
     // }
+
+    // Elevator controls
+    if (m_driverController.getWantsExtend()) {
+      m_elevator.extend();
+    } else if (m_driverController.getWantsRetract()) {
+      m_elevator.retract();
+    } else {
+      m_elevator.stopExtension();
+    }
+
+    if (m_driverController.getWantsLower()) {
+      m_elevator.lower();
+    } else if (m_driverController.getWantsRaise()) {
+      m_elevator.raise();
+    } else {
+      m_elevator.stopPivot();
+    }
+
+    m_elevator.periodic();
   }
 
   @Override

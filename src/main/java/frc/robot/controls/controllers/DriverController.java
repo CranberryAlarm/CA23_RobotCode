@@ -9,11 +9,27 @@ public class DriverController extends FilteredController {
     super(port, useDeadband, useSquaredInput);
   }
 
-  public boolean getWantsIntake() {
+  // public boolean getWantsIntake() {
+  // return this.getBButton();
+  // }
+
+  // public boolean getWantsExhaust() {
+  // return this.getXButton();
+  // }
+
+  public boolean getWantsExtend() {
+    return this.getXButton();
+  }
+
+  public boolean getWantsRetract() {
     return this.getBButton();
   }
 
-  public boolean getWantsExhaust() {
-    return this.getXButton();
+  public boolean getWantsRaise() {
+    return this.getAButton();
+  }
+
+  public boolean getWantsLower() {
+    return this.getYButton();
   }
 }
