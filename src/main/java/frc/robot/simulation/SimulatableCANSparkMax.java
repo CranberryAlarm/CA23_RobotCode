@@ -1,7 +1,6 @@
 package frc.robot.simulation;
 
 import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 
@@ -23,6 +22,7 @@ public class SimulatableCANSparkMax extends CANSparkMax {
   public void set(double speed) {
     super.set(speed);
 
-    mCANSparkMaxSimAppliedOutput.set(speed);
+    // TODO: Figure out why this is mad when running on a real robot
+    // mCANSparkMaxSimAppliedOutput.set(speed);
   }
 }

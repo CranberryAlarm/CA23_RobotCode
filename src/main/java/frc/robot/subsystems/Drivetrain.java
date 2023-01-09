@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.simulation.SimulatableCANSparkMax;
 
 public class Drivetrain {
   // 3 meters per second.
@@ -40,7 +42,7 @@ public class Drivetrain {
   private static final double kWheelRadius = 0.0508;
   private static final int kEncoderResolution = -4096;
 
-  private final PWMSparkMax m_leftLeader = new PWMSparkMax(1);
+  private final SimulatableCANSparkMax m_leftLeader = new SimulatableCANSparkMax(7, MotorType.kBrushless);
   private final PWMSparkMax m_leftFollower = new PWMSparkMax(2);
   private final PWMSparkMax m_rightLeader = new PWMSparkMax(3);
   private final PWMSparkMax m_rightFollower = new PWMSparkMax(4);

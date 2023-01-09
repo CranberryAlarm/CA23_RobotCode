@@ -2,7 +2,6 @@ package frc.robot;
 
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -14,7 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -28,7 +26,7 @@ public class Robot extends TimedRobot {
 
   // Robot subsystems
   private final Drivetrain m_drive = new Drivetrain();
-  private final Intake m_intake = Intake.getInstance();
+  // private final Intake m_intake = Intake.getInstance();
 
   //
   private final RamseteController m_ramsete = new RamseteController();
@@ -68,24 +66,24 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     m_drive.periodic();
-    m_intake.periodic();
+    // m_intake.periodic();
   }
 
   @Override
   public void autonomousInit() {
-    m_timer.reset();
-    m_timer.start();
+    // m_timer.reset();
+    // m_timer.start();
 
-    m_drive.resetOdometry(m_trajectory.getInitialPose());
-    m_field.setRobotPose(m_trajectory.getInitialPose());
+    // m_drive.resetOdometry(m_trajectory.getInitialPose());
+    // m_field.setRobotPose(m_trajectory.getInitialPose());
   }
 
   @Override
   public void autonomousPeriodic() {
-    double elapsed = m_timer.get();
-    Trajectory.State reference = m_trajectory.sample(elapsed);
-    ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
-    m_drive.drive(speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
+    // double elapsed = m_timer.get();
+    // Trajectory.State reference = m_trajectory.sample(elapsed);
+    // ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
+    // m_drive.drive(speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
   }
 
   @Override
@@ -93,6 +91,7 @@ public class Robot extends TimedRobot {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     double xSpeed = -m_speedLimiter.calculate(m_driverController.getFilteredAxis(1)) * Drivetrain.kMaxSpeed;
+    System.out.println(m_driverController.getFilteredAxis(1));
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
@@ -102,13 +101,13 @@ public class Robot extends TimedRobot {
     m_drive.drive(xSpeed, rot);
 
     // Intake controls
-    if (m_driverController.getWantsIntake()) {
-      m_intake.setSystemState(Intake.SystemState.INTAKING);
-    } else if (m_driverController.getWantsExhaust()) {
-      m_intake.setSystemState(Intake.SystemState.EXHAUSTING);
-    } else {
-      m_intake.setSystemState(Intake.SystemState.IDLE);
-    }
+    // if (m_driverController.getWantsIntake()) {
+    // m_intake.setSystemState(Intake.SystemState.INTAKING);
+    // } else if (m_driverController.getWantsExhaust()) {
+    // m_intake.setSystemState(Intake.SystemState.EXHAUSTING);
+    // } else {
+    // m_intake.setSystemState(Intake.SystemState.IDLE);
+    // }
   }
 
   @Override
