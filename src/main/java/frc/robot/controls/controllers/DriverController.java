@@ -9,14 +9,25 @@ public class DriverController extends FilteredController {
     super(port, useDeadband, useSquaredInput);
   }
 
-  // public boolean getWantsIntake() {
-  // return this.getBButton();
-  // }
+  // Drive
+  public double getForwardAxis() {
+    return this.getFilteredAxis(1);
+  }
 
-  // public boolean getWantsExhaust() {
-  // return this.getXButton();
-  // }
+  public double getTurnAxis() {
+    return this.getFilteredAxis(2);
+  }
 
+  // Intake
+  public boolean getWantsIntakeOpen() {
+    return this.getLeftBumper();
+  }
+
+  public boolean getWantsIntakeClose() {
+    return this.getRightBumper();
+  }
+
+  // Elevator
   public boolean getWantsExtend() {
     return this.getXButton();
   }

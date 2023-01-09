@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -28,7 +29,7 @@ public class Robot extends TimedRobot {
   // Robot subsystems
   private final Drivetrain m_drive = new Drivetrain();
   private final Elevator m_elevator = Elevator.getInstance();
-  // private final Intake m_intake = Intake.getInstance();
+  private final Intake m_intake = Intake.getInstance();
 
   //
   private final RamseteController m_ramsete = new RamseteController();
@@ -68,7 +69,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     m_drive.periodic();
-    // m_intake.periodic();
+    m_intake.periodic();
   }
 
   @Override
@@ -92,23 +93,21 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
-    double xSpeed = -m_speedLimiter.calculate(m_driverController.getFilteredAxis(1)) * Drivetrain.kMaxSpeed;
+    double xSpeed = -m_speedLimiter.calculate(m_driverController.getForwardAxis()) * Drivetrain.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    double rot = -m_rotLimiter.calculate(m_driverController.getFilteredAxis(2)) * Drivetrain.kMaxAngularSpeed;
+    double rot = -m_rotLimiter.calculate(m_driverController.getTurnAxis()) * Drivetrain.kMaxAngularSpeed;
     m_drive.drive(xSpeed, rot);
 
     // Intake controls
-    // if (m_driverController.getWantsIntake()) {
-    // m_intake.setSystemState(Intake.SystemState.INTAKING);
-    // } else if (m_driverController.getWantsExhaust()) {
-    // m_intake.setSystemState(Intake.SystemState.EXHAUSTING);
-    // } else {
-    // m_intake.setSystemState(Intake.SystemState.IDLE);
-    // }
+    if (m_driverController.getWantsIntakeOpen()) {
+      m_intake.open();
+    } else if (m_driverController.getWantsIntakeClose()) {
+      m_intake.close();
+    }
 
     // Elevator controls
     if (m_driverController.getWantsExtend()) {
