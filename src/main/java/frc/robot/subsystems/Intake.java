@@ -19,7 +19,7 @@ public class Intake extends Subsystem {
   private DoubleSolenoid mIntakeSolenoid;
 
   private Intake() {
-    mIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.kIntakeSolenoidForwardId,
+    mIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.kIntakeSolenoidForwardId,
         Constants.kIntakeSolenoidReverseId);
   }
 

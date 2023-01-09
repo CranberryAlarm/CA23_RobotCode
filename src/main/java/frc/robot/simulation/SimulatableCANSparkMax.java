@@ -23,6 +23,6 @@ public class SimulatableCANSparkMax extends CANSparkMax {
     super.set(speed);
 
     // TODO: Figure out why this is mad when running on a real robot
-    mCANSparkMaxSimAppliedOutput.set(speed);
+    // mCANSparkMaxSimAppliedOutput.set(speed);
   }
 }

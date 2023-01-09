@@ -10,12 +10,12 @@ public class Constants {
   public static final int kIntakeMasterId = 14;
 
   // Elevator
-  public static final int kElevatorPivotMotorId = 5;
-  public static final int kElevatorExtensionMotorId = 7;// 6;
+  public static final int kElevatorPivotMotorId = 10;
+  public static final int kElevatorExtensionMotorId = 9;
 
   // Drivetrain
-  public static final int kDrivetrainFLMotorId = 6;// 7;
-  public static final int kDrivetrainBLMotorId = 8;
-  public static final int kDrivetrainFRMotorId = 9;
-  public static final int kDrivetrainBRMotorId = 10;
+  public static final int kDrivetrainFLMotorId = 5;
+  public static final int kDrivetrainBLMotorId = 6;
+  public static final int kDrivetrainFRMotorId = 7;
+  public static final int kDrivetrainBRMotorId = 8;
 }

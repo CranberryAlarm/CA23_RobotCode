@@ -136,6 +136,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+    m_intake.stop();
+    m_elevator.stop();
   }
 
   @Override

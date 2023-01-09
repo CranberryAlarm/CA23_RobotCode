@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -85,6 +86,15 @@ public class Drivetrain {
       m_drivetrainSystem, DCMotor.getCIM(2), 8, kTrackWidth, kWheelRadius, null);
 
   public Drivetrain() {
+    m_leftLeader.restoreFactoryDefaults();
+    m_leftLeader.setIdleMode(IdleMode.kCoast);
+    m_leftFollower.restoreFactoryDefaults();
+    m_leftFollower.setIdleMode(IdleMode.kCoast);
+    m_rightLeader.restoreFactoryDefaults();
+    m_rightLeader.setIdleMode(IdleMode.kCoast);
+    m_rightFollower.restoreFactoryDefaults();
+    m_rightFollower.setIdleMode(IdleMode.kCoast);
+
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
