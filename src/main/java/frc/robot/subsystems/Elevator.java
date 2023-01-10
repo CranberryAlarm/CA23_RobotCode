@@ -1,15 +1,16 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.simulation.SimulatableCANSparkMax;
 
 public class Elevator extends Subsystem {
-  private static final double kPivotPowerOut = 0.75;
-  private static final double kPivotPowerIn = -0.75;
-  private static final double kExtensionPowerOut = 0.02;
-  private static final double kExtensionPowerIn = -0.02;
+  private static final double kPivotPowerOut = 0.40;
+  private static final double kPivotPowerIn = -0.4;
+  private static final double kExtensionPowerOut = 0.5;
+  private static final double kExtensionPowerIn = -0.5;
 
   private static Elevator mInstance;
 
@@ -28,6 +29,9 @@ public class Elevator extends Subsystem {
   private Elevator() {
     mPivotMotor = new SimulatableCANSparkMax(Constants.kElevatorPivotMotorId, MotorType.kBrushless);
     mExtensionMotor = new SimulatableCANSparkMax(Constants.kElevatorExtensionMotorId, MotorType.kBrushless);
+
+    mPivotMotor.setIdleMode(IdleMode.kBrake);
+    mExtensionMotor.setIdleMode(IdleMode.kBrake);
     // mPivotMotor.setInverted(true);
 
     mPeriodicIO = new PeriodicIO();
