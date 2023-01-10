@@ -29,6 +29,10 @@ public class OperatorController extends FilteredController {
     return this.getRawButton(6);
   }
 
+  public boolean getWantsPivotBoost2() {
+    return this.getRawButton(5);
+  }
+
   public boolean getWantsResetPivotEncoder() {
     return this.getRawButton(8);
   }

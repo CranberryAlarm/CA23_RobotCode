@@ -1,5 +1,8 @@
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -33,6 +36,7 @@ public class Robot extends TimedRobot {
   private final Drivetrain m_drive = new Drivetrain();
   private final Elevator m_elevator = Elevator.getInstance();
   private final Intake m_intake = Intake.getInstance();
+  private UsbCamera m_camera;
 
   //
   private final RamseteController m_ramsete = new RamseteController();
@@ -47,6 +51,11 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Set up the Field2d object for simulation
     SmartDashboard.putData("Field", m_field);
+
+    // Camera server
+    m_camera = CameraServer.startAutomaticCapture();
+    m_camera.setFPS(30);
+    m_camera.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
     // Use the pathweaver trajectory
     try {
@@ -135,6 +144,7 @@ public class Robot extends TimedRobot {
 
     // Pivot controls
     m_elevator.boostPivot(m_operatorController.getWantsPivotBoost());
+    m_elevator.boostPivot2(m_operatorController.getWantsPivotBoost2());
 
     // if (m_driverController.getWantsLower()) {
     // m_elevator.lower();
