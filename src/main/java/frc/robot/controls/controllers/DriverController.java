@@ -35,19 +35,19 @@ public class DriverController extends FilteredController {
 
   // Elevator
   public boolean getWantsExtend() {
-    return this.getXButton();
+    return this.getRawButton(4);
   }
 
   public boolean getWantsRetract() {
-    return this.getBButton();
+    return this.getRawButton(3);
   }
 
   public boolean getWantsRaise() {
-    return this.getAButton();
+    return this.getRawButton(2);
   }
 
   public boolean getWantsLower() {
-    return this.getYButton();
+    return this.getRawButton(1);
   }
 
 }
