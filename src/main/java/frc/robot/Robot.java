@@ -106,6 +106,7 @@ public class Robot extends TimedRobot {
     // // positive value when we pull to the left (remember, CCW is positive in
     // // mathematics). Xbox controllers return positive values when you pull to
     // // the right by default.
+    m_drive.slowMode(m_driverController.getWantsSlowMode());
     double rot = -m_rotLimiter.calculate(m_driverController.getTurnAxis()) *
         Drivetrain.kMaxAngularSpeed;
     m_drive.drive(xSpeed, rot);
@@ -133,11 +134,13 @@ public class Robot extends TimedRobot {
     }
 
     // Pivot controls
-    if (m_driverController.getWantsLower()) {
-      m_elevator.lower();
-    } else if (m_driverController.getWantsRaise()) {
-      m_elevator.raise();
-    } else if (m_operatorController.getWantsGroundPosition()) {
+    m_elevator.boostPivot(m_operatorController.getWantsPivotBoost());
+
+    // if (m_driverController.getWantsLower()) {
+    // m_elevator.lower();
+    // } else if (m_driverController.getWantsRaise()) {
+    // m_elevator.raise();
+    if (m_operatorController.getWantsGroundPosition()) {
       m_elevator.goToPivotGround();
     } else if (m_operatorController.getWantsPreGoalPosition()) {
       m_elevator.goToPivotPreScore();
@@ -149,6 +152,12 @@ public class Robot extends TimedRobot {
       m_elevator.resetPivotEncoder();
     } else {
       m_elevator.stopPivot();
+    }
+
+    if (m_driverController.getWantsAutoScore()) {
+      m_intake.open();
+      m_elevator.goToExtensionStow();
+      m_elevator.goToPivotScore();
     }
 
     m_elevator.periodic();

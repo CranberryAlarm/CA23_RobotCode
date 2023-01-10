@@ -12,11 +12,14 @@ import frc.robot.Constants;
 import frc.robot.simulation.SimulatableCANSparkMax;
 
 public class Elevator extends Subsystem {
-  private static final double kPivotPowerOut = 0.40;
-  private static final double kPivotPowerIn = -0.4;
-  private static final double kExtensionPowerOut = 0.35;
-  private static final double kExtensionPowerIn = -0.35;
-  private static final double kPivotBoostAmount = -15;
+  private static final double kPivotPowerOut = 1.0;
+  private static final double kPivotPowerIn = -0.7;
+  private static final double kExtensionPowerOut = 0.6;
+  private static final double kExtensionPowerIn = -0.6;
+  private static final double kPivotBoostAmount = -3;
+
+  private static final double kPivotCLRampRate = 0.5;
+  private static final double kExtensionCLRampRate = 0.5;
 
   private static Elevator mInstance;
 
@@ -52,6 +55,7 @@ public class Elevator extends Subsystem {
     mPivotPIDController.setIZone(0);
     mPivotPIDController.setFF(0);
     mPivotPIDController.setOutputRange(kPivotPowerIn, kPivotPowerOut);
+    mPivotMotor.setClosedLoopRampRate(kPivotCLRampRate);
 
     mPivotLowerLimit = mPivotMotor.getForwardLimitSwitch(Type.kNormallyOpen);
 
@@ -68,6 +72,7 @@ public class Elevator extends Subsystem {
     mExtensionPIDController.setIZone(0);
     mExtensionPIDController.setFF(0);
     mExtensionPIDController.setOutputRange(kExtensionPowerIn, kExtensionPowerOut);
+    mExtensionMotor.setClosedLoopRampRate(kExtensionCLRampRate);
 
     mExtensionLowerLimit = mExtensionMotor.getReverseLimitSwitch(Type.kNormallyOpen);
     mExtensionUpperLimit = mExtensionMotor.getForwardLimitSwitch(Type.kNormallyOpen);
@@ -157,7 +162,7 @@ public class Elevator extends Subsystem {
         mPivotPIDController.setReference(mPeriodicIO.pivot_target + kPivotBoostAmount,
             CANSparkMax.ControlType.kPosition);
       } else {
-        mPivotPIDController.setReference(mPeriodicIO.pivot_target + kPivotBoostAmount,
+        mPivotPIDController.setReference(mPeriodicIO.pivot_target,
             CANSparkMax.ControlType.kPosition);
       }
     } else {

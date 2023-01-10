@@ -43,6 +43,8 @@ public class Drivetrain {
   private static final double kWheelRadius = 0.0508;
   private static final int kEncoderResolution = -4096;
 
+  private static final double kSlowModeRotScale = 0.1;
+
   private final SimulatableCANSparkMax m_leftLeader = new SimulatableCANSparkMax(Constants.kDrivetrainFLMotorId,
       MotorType.kBrushless);
   private final SimulatableCANSparkMax m_leftFollower = new SimulatableCANSparkMax(Constants.kDrivetrainBLMotorId,
@@ -113,6 +115,8 @@ public class Drivetrain {
     SmartDashboard.putData("Field", m_fieldSim);
   }
 
+  private boolean m_slowMode = false;
+
   /** Sets speeds to the drivetrain motors. */
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
     var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
@@ -124,6 +128,10 @@ public class Drivetrain {
     m_rightGroup.setVoltage(rightOutput + rightFeedforward);
   }
 
+  public void slowMode(boolean slow) {
+    m_slowMode = slow;
+  }
+
   /**
    * Controls the robot using arcade drive.
    *
@@ -131,7 +139,11 @@ public class Drivetrain {
    * @param rot    the rotation
    */
   public void drive(double xSpeed, double rot) {
-    setSpeeds(m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0, rot)));
+    if (m_slowMode) {
+      setSpeeds(m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0, rot * kSlowModeRotScale)));
+    } else {
+      setSpeeds(m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0, rot)));
+    }
   }
 
   /** Update robot odometry. */

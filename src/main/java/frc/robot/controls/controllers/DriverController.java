@@ -52,6 +52,10 @@ public class DriverController extends FilteredController {
     return this.getRawButton(4);
   }
 
+  public boolean getWantsAutoScore() {
+    return this.getRawButton(2);
+  }
+
   public boolean getWantsExtend() {
     return false;
     // return this.getRawButton(4);
@@ -62,15 +66,19 @@ public class DriverController extends FilteredController {
     // return this.getRawButton(3);
   }
 
-  public boolean getWantsRaise() {
+  public boolean getWantsSlowMode() {
     return this.getFilteredAxis(3) > kTriggerActivationThreshold;
-    // return this.getRawButton(2);
   }
 
-  public boolean getWantsLower() {
-    return this.getFilteredAxis(2) > kTriggerActivationThreshold;
-    // return this.getRawButton(1);
-  }
+  // public boolean getWantsRaise() {
+  // return this.getFilteredAxis(3) > kTriggerActivationThreshold;
+  // // return this.getRawButton(2);
+  // }
+
+  // public boolean getWantsLower() {
+  // return this.getFilteredAxis(2) > kTriggerActivationThreshold;
+  // // return this.getRawButton(1);
+  // }
 
 }
 
