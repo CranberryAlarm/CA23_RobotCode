@@ -18,7 +18,11 @@ public class DriverController extends FilteredController {
 
   public double getTurnAxis() {
     if (RobotBase.isReal()) {
-      return this.getFilteredAxis(4);
+      // Righthand joystick
+      // return this.getFilteredAxis(4);
+
+      // Lefthand joysick
+      return this.getFilteredAxis(0);
     } else {
       return this.getFilteredAxis(2);
     }

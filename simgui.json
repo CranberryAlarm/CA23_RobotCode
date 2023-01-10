@@ -6,12 +6,7 @@
           "open": true
         }
       },
-      "SPARK MAX [5]": {
-        "header": {
-          "open": true
-        }
-      },
-      "SPARK MAX [7]": {
+      "Compressor[0]": {
         "header": {
           "open": true
         }
