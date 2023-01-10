@@ -58,8 +58,8 @@ public class Drivetrain {
   private final Encoder m_leftEncoder = new Encoder(0, 1);
   private final Encoder m_rightEncoder = new Encoder(2, 3);
 
-  private final PIDController m_leftPIDController = new PIDController(8.5, 0, 0);
-  private final PIDController m_rightPIDController = new PIDController(8.5, 0, 0);
+  private final PIDController m_leftPIDController = new PIDController(0, 0, 0);
+  private final PIDController m_rightPIDController = new PIDController(0, 0, 0);
 
   private final AnalogGyro m_gyro = new AnalogGyro(0);
   private final Pose2d m_pose = new Pose2d(m_leftEncoder.getDistance(), m_rightEncoder.getDistance(),
