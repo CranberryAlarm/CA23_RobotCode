@@ -32,7 +32,7 @@ public class Elevator extends Subsystem {
 
     mPivotMotor.setIdleMode(IdleMode.kBrake);
     mExtensionMotor.setIdleMode(IdleMode.kBrake);
-    // mPivotMotor.setInverted(true);
+    mExtensionMotor.setInverted(true);
 
     mPeriodicIO = new PeriodicIO();
   }
