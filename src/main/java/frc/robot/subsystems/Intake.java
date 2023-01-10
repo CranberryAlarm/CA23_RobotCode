@@ -22,11 +22,11 @@ public class Intake extends Subsystem {
   }
 
   public void open() {
-    mIntakeSolenoid.set(true);
+    mIntakeSolenoid.set(false);
   }
 
   public void close() {
-    mIntakeSolenoid.set(false);
+    mIntakeSolenoid.set(true);
   }
 
   @Override
@@ -35,7 +35,7 @@ public class Intake extends Subsystem {
 
   @Override
   public void stop() {
-    mIntakeSolenoid.set(true);
+    mIntakeSolenoid.set(false);
   }
 
   @Override

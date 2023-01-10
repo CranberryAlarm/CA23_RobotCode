@@ -9,8 +9,8 @@ import frc.robot.simulation.SimulatableCANSparkMax;
 public class Elevator extends Subsystem {
   private static final double kPivotPowerOut = 0.40;
   private static final double kPivotPowerIn = -0.4;
-  private static final double kExtensionPowerOut = 0.5;
-  private static final double kExtensionPowerIn = -0.5;
+  private static final double kExtensionPowerOut = 0.35;
+  private static final double kExtensionPowerIn = -0.35;
 
   private static Elevator mInstance;
 

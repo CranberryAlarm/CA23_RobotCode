@@ -31,13 +31,13 @@ import frc.robot.simulation.SimulatableCANSparkMax;
 
 public class Drivetrain {
   // 3 meters per second.
-  public static final double kMaxSpeed = 3.0;
+  public static final double kMaxSpeed = 1.0;
 
   // 3 meters per second.
-  public static final double kMaxAcceleration = 3.0;
+  public static final double kMaxAcceleration = 2.0;
 
   // 1/2 rotation per second.
-  public static final double kMaxAngularSpeed = Math.PI;
+  public static final double kMaxAngularSpeed = Math.PI * 0.7;
 
   private static final double kTrackWidth = 0.381 * 2;
   private static final double kWheelRadius = 0.0508;
