@@ -14,15 +14,19 @@ public class OperatorController extends FilteredController {
   }
 
   public boolean getWantsScorePosition() {
-    return this.getRawButton(3);
+    return this.getRawButton(2);
   }
 
-  public boolean getWantsGoalPosition() {
-    return this.getRawButton(2);
+  public boolean getWantsPreGoalPosition() {
+    return this.getRawButton(3);
   }
 
   public boolean getWantsStowPosition() {
     return this.getRawButton(4);
+  }
+
+  public boolean getWantsPivotBoost() {
+    return this.getRawButton(6);
   }
 
   public boolean getWantsResetEncoders() {

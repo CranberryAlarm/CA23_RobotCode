@@ -1,12 +1,8 @@
 package frc.robot;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -35,8 +31,7 @@ public class Robot extends TimedRobot {
 
   // Robot subsystems
   private final Drivetrain m_drive = new Drivetrain();
-  // private final Elevator m_elevator = Elevator.getInstance();
-  private Elevator m_elevator;
+  private final Elevator m_elevator = Elevator.getInstance();
   private final Intake m_intake = Intake.getInstance();
 
   //
@@ -48,25 +43,8 @@ public class Robot extends TimedRobot {
 
   private final Field2d m_field = new Field2d();
 
-  private CANSparkMax mPivotMotor;
-  private RelativeEncoder mPivotEncoder;
-  private SparkMaxPIDController mPivotPIDController;
-
   @Override
   public void robotInit() {
-    mPivotMotor = new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless);
-    mPivotMotor.restoreFactoryDefaults();
-    mPivotPIDController = mPivotMotor.getPIDController();
-    mPivotEncoder = mPivotMotor.getEncoder();
-
-    mPivotPIDController.setP(0.1);
-    mPivotPIDController.setI(1e-4);
-    mPivotPIDController.setD(1);
-    mPivotPIDController.setIZone(0);
-    mPivotPIDController.setFF(0);
-    mPivotPIDController.setOutputRange(-1, 1);
-
-    // m_elevator = Elevator.getInstance();
     // Set up the Field2d object for simulation
     SmartDashboard.putData("Field", m_field);
 
@@ -102,19 +80,19 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    // m_timer.reset();
-    // m_timer.start();
+    m_timer.reset();
+    m_timer.start();
 
-    // m_drive.resetOdometry(m_trajectory.getInitialPose());
-    // m_field.setRobotPose(m_trajectory.getInitialPose());
+    m_drive.resetOdometry(m_trajectory.getInitialPose());
+    m_field.setRobotPose(m_trajectory.getInitialPose());
   }
 
   @Override
   public void autonomousPeriodic() {
-    // double elapsed = m_timer.get();
-    // Trajectory.State reference = m_trajectory.sample(elapsed);
-    // ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
-    // m_drive.drive(speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
+    double elapsed = m_timer.get();
+    Trajectory.State reference = m_trajectory.sample(elapsed);
+    ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
+    m_drive.drive(speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
   }
 
   @Override
@@ -128,7 +106,8 @@ public class Robot extends TimedRobot {
     // // positive value when we pull to the left (remember, CCW is positive in
     // // mathematics). Xbox controllers return positive values when you pull to
     // // the right by default.
-    double rot = -m_rotLimiter.calculate(m_driverController.getTurnAxis()) * Drivetrain.kMaxAngularSpeed;
+    double rot = -m_rotLimiter.calculate(m_driverController.getTurnAxis()) *
+        Drivetrain.kMaxAngularSpeed;
     m_drive.drive(xSpeed, rot);
 
     // // Intake controls
@@ -139,32 +118,35 @@ public class Robot extends TimedRobot {
     }
 
     // Elevator controls
-    // if (m_driverController.getWantsExtend()) {
-    // m_elevator.extend();
-    // } else if (m_driverController.getWantsRetract()) {
-    // m_elevator.retract();
-    // } else {
-    // m_elevator.stopExtension();
-    // }
+    if (m_driverController.getWantsExtend()) {
+      m_elevator.extend();
+    } else if (m_driverController.getWantsRetract()) {
+      m_elevator.retract();
+    } else {
+      m_elevator.stopExtension();
+    }
 
     // Pivot controls
-    // if (m_driverController.getWantsLower()) {
-    // m_elevator.lower();
-    // } else if (m_driverController.getWantsRaise()) {
-    // m_elevator.raise();
-    // } else if (m_operatorController.getWantsGroundPosition()) {
-    // m_elevator.goToGround();
-    // } else if (m_operatorController.getWantsStowPosition()) {
-    // m_elevator.goToStow();
-    // } else if (m_operatorController.getWantsResetEncoders()) {
-    // m_elevator.resetEncoders();
-    // } else {
-    // m_elevator.stopPivot();
-    // }
+    if (m_driverController.getWantsLower()) {
+      m_elevator.lower();
+    } else if (m_driverController.getWantsRaise()) {
+      m_elevator.raise();
+    } else if (m_operatorController.getWantsGroundPosition()) {
+      m_elevator.goToGround();
+    } else if (m_operatorController.getWantsPreGoalPosition()) {
+      m_elevator.goToPreScore();
+    } else if (m_operatorController.getWantsScorePosition()) {
+      m_elevator.goToScore();
+    } else if (m_operatorController.getWantsStowPosition()) {
+      m_elevator.goToStow();
+    } else if (m_operatorController.getWantsResetEncoders()) {
+      m_elevator.resetEncoders();
+    } else {
+      m_elevator.stopPivot();
+    }
 
-    // m_elevator.periodic();
-    // m_elevator.outputTelemetry();
-    mPivotPIDController.setReference(50, ControlType.kPosition);
+    m_elevator.periodic();
+    m_elevator.outputTelemetry();
   }
 
   @Override
@@ -175,7 +157,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_intake.stop();
-    // m_elevator.stop();
+    m_elevator.stop();
   }
 
   @Override
