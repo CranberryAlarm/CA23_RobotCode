@@ -122,6 +122,12 @@ public class Robot extends TimedRobot {
       m_elevator.extend();
     } else if (m_driverController.getWantsRetract()) {
       m_elevator.retract();
+    } else if (m_driverController.getWantsExtensionStow()) {
+      m_elevator.goToExtensionStow();
+    } else if (m_driverController.getWantsExtensionMidGoal()) {
+      m_elevator.goToExtensionMidGoal();
+    } else if (m_driverController.getWantsExtensionHighGoal()) {
+      m_elevator.goToExtensionHighGoal();
     } else {
       m_elevator.stopExtension();
     }
@@ -132,15 +138,15 @@ public class Robot extends TimedRobot {
     } else if (m_driverController.getWantsRaise()) {
       m_elevator.raise();
     } else if (m_operatorController.getWantsGroundPosition()) {
-      m_elevator.goToGround();
+      m_elevator.goToPivotGround();
     } else if (m_operatorController.getWantsPreGoalPosition()) {
-      m_elevator.goToPreScore();
+      m_elevator.goToPivotPreScore();
     } else if (m_operatorController.getWantsScorePosition()) {
-      m_elevator.goToScore();
+      m_elevator.goToPivotScore();
     } else if (m_operatorController.getWantsStowPosition()) {
-      m_elevator.goToStow();
-    } else if (m_operatorController.getWantsResetEncoders()) {
-      m_elevator.resetEncoders();
+      m_elevator.goToPivotStow();
+    } else if (m_operatorController.getWantsResetPivotEncoder()) {
+      m_elevator.resetPivotEncoder();
     } else {
       m_elevator.stopPivot();
     }

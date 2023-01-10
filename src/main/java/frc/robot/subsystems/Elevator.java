@@ -4,6 +4,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxLimitSwitch;
+import com.revrobotics.SparkMaxLimitSwitch.Type;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -28,9 +30,13 @@ public class Elevator extends Subsystem {
   private CANSparkMax mPivotMotor;
   private RelativeEncoder mPivotEncoder;
   private SparkMaxPIDController mPivotPIDController;
+  private SparkMaxLimitSwitch mPivotLowerLimit;
 
   private SimulatableCANSparkMax mExtensionMotor;
   private RelativeEncoder mExtensionEncoder;
+  private SparkMaxPIDController mExtensionPIDController;
+  private SparkMaxLimitSwitch mExtensionLowerLimit;
+  private SparkMaxLimitSwitch mExtensionUpperLimit;
 
   private PeriodicIO mPeriodicIO = new PeriodicIO();
 
@@ -41,19 +47,30 @@ public class Elevator extends Subsystem {
     mPivotEncoder = mPivotMotor.getEncoder();
 
     mPivotPIDController.setP(0.1);
-    // mPivotPIDController.setI(0);
     mPivotPIDController.setI(1e-8);
     mPivotPIDController.setD(1);
     mPivotPIDController.setIZone(0);
     mPivotPIDController.setFF(0);
     mPivotPIDController.setOutputRange(kPivotPowerIn, kPivotPowerOut);
 
-    mExtensionMotor = new SimulatableCANSparkMax(Constants.kElevatorExtensionMotorId,
-        MotorType.kBrushless);
+    mPivotLowerLimit = mPivotMotor.getForwardLimitSwitch(Type.kNormallyOpen);
+
+    mExtensionMotor = new SimulatableCANSparkMax(Constants.kElevatorExtensionMotorId, MotorType.kBrushless);
     mExtensionMotor.restoreFactoryDefaults();
     mExtensionMotor.setIdleMode(IdleMode.kBrake);
     mExtensionMotor.setInverted(true);
+    mExtensionPIDController = mExtensionMotor.getPIDController();
     mExtensionEncoder = mExtensionMotor.getEncoder();
+
+    mExtensionPIDController.setP(0.1);
+    mExtensionPIDController.setI(1e-8);
+    mExtensionPIDController.setD(1);
+    mExtensionPIDController.setIZone(0);
+    mExtensionPIDController.setFF(0);
+    mExtensionPIDController.setOutputRange(kExtensionPowerIn, kExtensionPowerOut);
+
+    mExtensionLowerLimit = mExtensionMotor.getReverseLimitSwitch(Type.kNormallyOpen);
+    mExtensionUpperLimit = mExtensionMotor.getForwardLimitSwitch(Type.kNormallyOpen);
 
     mPeriodicIO = new PeriodicIO();
   }
@@ -65,13 +82,17 @@ public class Elevator extends Subsystem {
     boolean is_pivot_boosted = false;
 
     double extension_power = 0.0;
+    double extension_target = 0.0;
+    boolean is_extension_pos_control = false;
   }
 
   public void extend() {
+    mPeriodicIO.is_extension_pos_control = false;
     mPeriodicIO.extension_power = kExtensionPowerOut;
   }
 
   public void retract() {
+    mPeriodicIO.is_extension_pos_control = false;
     mPeriodicIO.extension_power = kExtensionPowerIn;
   }
 
@@ -85,24 +106,39 @@ public class Elevator extends Subsystem {
     mPeriodicIO.pivot_power = kPivotPowerOut;
   }
 
-  public void goToGround() {
+  public void goToPivotGround() {
     mPeriodicIO.is_pivot_pos_control = true;
     mPeriodicIO.pivot_target = Constants.kPivotGroundCount;
   }
 
-  public void goToScore() {
+  public void goToPivotScore() {
     mPeriodicIO.is_pivot_pos_control = true;
     mPeriodicIO.pivot_target = Constants.kPivotScoreCount;
   }
 
-  public void goToPreScore() {
+  public void goToPivotPreScore() {
     mPeriodicIO.is_pivot_pos_control = true;
     mPeriodicIO.pivot_target = Constants.kPivotPreScoreCount;
   }
 
-  public void goToStow() {
+  public void goToPivotStow() {
     mPeriodicIO.is_pivot_pos_control = true;
     mPeriodicIO.pivot_target = Constants.kPivotStowCount;
+  }
+
+  public void goToExtensionStow() {
+    mPeriodicIO.is_extension_pos_control = true;
+    mPeriodicIO.extension_target = Constants.kExtensionStowCount;
+  }
+
+  public void goToExtensionMidGoal() {
+    mPeriodicIO.is_extension_pos_control = true;
+    mPeriodicIO.extension_target = Constants.kExtensionMidGoalCount;
+  }
+
+  public void goToExtensionHighGoal() {
+    mPeriodicIO.is_extension_pos_control = true;
+    mPeriodicIO.extension_target = Constants.kExtensionHighGoalCount;
   }
 
   public void boostPivot(boolean boost) {
@@ -128,7 +164,11 @@ public class Elevator extends Subsystem {
       mPivotMotor.set(mPeriodicIO.pivot_power);
     }
 
-    mExtensionMotor.set(mPeriodicIO.extension_power);
+    if (mPeriodicIO.is_extension_pos_control) {
+      mExtensionPIDController.setReference(mPeriodicIO.extension_target, CANSparkMax.ControlType.kPosition);
+    } else {
+      mExtensionMotor.set(mPeriodicIO.extension_power);
+    }
   }
 
   @Override
@@ -140,20 +180,23 @@ public class Elevator extends Subsystem {
   public void stopPivot() {
     if (!mPeriodicIO.is_pivot_pos_control) {
       mPeriodicIO.pivot_power = 0.0;
-      mPeriodicIO.is_pivot_pos_control = false;
-
       mPivotMotor.set(0.0);
     }
   }
 
   public void stopExtension() {
-    mPeriodicIO.extension_power = 0.0;
-
-    mExtensionMotor.set(0.0);
+    if (!mPeriodicIO.is_extension_pos_control) {
+      mPeriodicIO.extension_power = 0.0;
+      mExtensionMotor.set(0.0);
+    }
   }
 
-  public void resetEncoders() {
+  public void resetPivotEncoder() {
     mPivotEncoder.setPosition(0);
+  }
+
+  public void resetExtensionEncoder() {
+    mExtensionEncoder.setPosition(0);
   }
 
   @Override
@@ -162,9 +205,12 @@ public class Elevator extends Subsystem {
     SmartDashboard.putNumber("Pivot motor power:", mPeriodicIO.pivot_power);
     SmartDashboard.putNumber("Pivot encoder count:", mPivotEncoder.getPosition());
     SmartDashboard.putNumber("Pivot PID target:", mPeriodicIO.pivot_power);
+    SmartDashboard.putBoolean("Pivot lower limit:", mPivotLowerLimit.isPressed());
 
     // Extension telemetry
     SmartDashboard.putNumber("Extension motor power:", mPeriodicIO.extension_power);
     SmartDashboard.putNumber("Extension encoder count:", mExtensionEncoder.getPosition());
+    SmartDashboard.putBoolean("Extension lower limit:", mExtensionLowerLimit.isPressed());
+    SmartDashboard.putBoolean("Extension Upper limit:", mExtensionUpperLimit.isPressed());
   }
 }
