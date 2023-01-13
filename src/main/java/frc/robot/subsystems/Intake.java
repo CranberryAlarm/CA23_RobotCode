@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class Intake extends Subsystem {
+  private PeriodicIO mPeriodicIO = new PeriodicIO();
   private static Intake mInstance;
 
   public static Intake getInstance() {
@@ -19,18 +20,25 @@ public class Intake extends Subsystem {
 
   private Intake() {
     mIntakeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.kIntakeSolenoidForwardId);
+
+    mPeriodicIO = new PeriodicIO();
+  }
+
+  private static class PeriodicIO {
+    boolean intake_solenoid_state = true;
   }
 
   public void open() {
-    mIntakeSolenoid.set(false);
+    mPeriodicIO.intake_solenoid_state = false;
   }
 
   public void close() {
-    mIntakeSolenoid.set(true);
+    mPeriodicIO.intake_solenoid_state = true;
   }
 
   @Override
   public void periodic() {
+    mIntakeSolenoid.set(mPeriodicIO.intake_solenoid_state);
   }
 
   @Override
