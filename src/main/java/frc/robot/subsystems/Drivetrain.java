@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -64,13 +65,9 @@ public class Drivetrain {
   private final PIDController m_rightPIDController = new PIDController(0, 0, 0);
 
   private final AnalogGyro m_gyro = new AnalogGyro(0);
-  private final Pose2d m_pose = new Pose2d(m_leftEncoder.getDistance(), m_rightEncoder.getDistance(),
-      m_gyro.getRotation2d());
 
   private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
-  // private final DifferentialDriveOdometry m_odometry = new
-  // DifferentialDriveOdometry(m_gyro.getRotation2d(), m_pose);
-  // TODO: 2023 version
+
   private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(),
       m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
 
@@ -158,8 +155,6 @@ public class Drivetrain {
     m_rightEncoder.reset();
     m_drivetrainSimulator.setPose(pose);
 
-    // m_odometry.resetPosition(pose, pose.getRotation());
-    // TODO: 2023 version
     m_odometry.resetPosition(pose.getRotation(), m_leftEncoder.getDistance(),
         m_rightEncoder.getDistance(), pose);
   }
