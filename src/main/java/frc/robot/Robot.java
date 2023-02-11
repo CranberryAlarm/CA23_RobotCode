@@ -184,8 +184,9 @@ public class Robot extends TimedRobot {
 
     double[] cameraPose = (double[]) limelightInfo.get("targetpose_cameraspace");
     double cameraX = -cameraPose[0];
+    double cameraZ = cameraPose[2];
 
-    m_drive.drive(0, cameraX*5);
+    m_drive.drive(cameraZ*0.5, cameraX*5);
 
     SmartDashboard.putNumber("cameraX", cameraX);
   }
