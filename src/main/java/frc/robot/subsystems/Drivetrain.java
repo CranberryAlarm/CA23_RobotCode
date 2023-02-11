@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -64,7 +65,7 @@ public class Drivetrain {
   private final PIDController m_leftPIDController = new PIDController(0, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(0, 0, 0);
 
-  private final AnalogGyro m_gyro = new AnalogGyro(0);
+  private final AHRS m_gyro = new AHRS();
 
   private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
 
@@ -75,7 +76,7 @@ public class Drivetrain {
   private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
 
   // Simulation classes help us simulate our robot
-  private final AnalogGyroSim m_gyroSim = new AnalogGyroSim(m_gyro);
+  // private final AnalogGyroSim m_gyroSim = new AnalogGyroSim(m_gyro);
   private final EncoderSim m_leftEncoderSim = new EncoderSim(m_leftEncoder);
   private final EncoderSim m_rightEncoderSim = new EncoderSim(m_rightEncoder);
   private final Field2d m_fieldSim = new Field2d();
@@ -182,7 +183,7 @@ public class Drivetrain {
     m_leftEncoderSim.setRate(m_drivetrainSimulator.getLeftVelocityMetersPerSecond());
     m_rightEncoderSim.setDistance(m_drivetrainSimulator.getRightPositionMeters());
     m_rightEncoderSim.setRate(m_drivetrainSimulator.getRightVelocityMetersPerSecond());
-    m_gyroSim.setAngle(-m_drivetrainSimulator.getHeading().getDegrees());
+    // m_gyroSim.setAngle(-m_drivetrainSimulator.getHeading().getDegrees());
   }
 
   /** Update odometry - this should be run every robot loop. */
