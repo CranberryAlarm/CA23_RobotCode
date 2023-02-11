@@ -20,9 +20,11 @@ import frc.robot.controls.controllers.OperatorController;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Limelight;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 
 public class Robot extends TimedRobot {
   private final DriverController m_driverController = new DriverController(0, true, true);
@@ -37,6 +39,8 @@ public class Robot extends TimedRobot {
   private final Elevator m_elevator = Elevator.getInstance();
   private final Intake m_intake = Intake.getInstance();
   private UsbCamera m_camera;
+  private Limelight limelight;
+  private HashMap<String, Object> limelightInfo;
 
   //
   private final RamseteController m_ramsete = new RamseteController();
@@ -56,6 +60,10 @@ public class Robot extends TimedRobot {
     m_camera = CameraServer.startAutomaticCapture();
     m_camera.setFPS(30);
     m_camera.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
+
+    // Limelight setup
+    limelight = new Limelight();
+    limelightInfo = new HashMap<String, Object>();
 
     // Use the pathweaver trajectory
     try {
@@ -85,6 +93,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     m_drive.periodic();
     m_intake.periodic();
+    limelightInfo = limelight.update();
   }
 
   @Override
@@ -118,7 +127,7 @@ public class Robot extends TimedRobot {
     m_drive.slowMode(m_driverController.getWantsSlowMode());
     double rot = -m_rotLimiter.calculate(m_driverController.getTurnAxis()) *
         Drivetrain.kMaxAngularSpeed;
-    m_drive.drive(xSpeed, rot);
+    // m_drive.drive(xSpeed, rot);
 
     // // Intake controls
     if (m_driverController.getWantsIntakeOpen()) {
@@ -172,6 +181,13 @@ public class Robot extends TimedRobot {
 
     m_elevator.periodic();
     m_elevator.outputTelemetry();
+
+    double[] cameraPose = (double[]) limelightInfo.get("targetpose_cameraspace");
+    double cameraX = -cameraPose[0];
+
+    m_drive.drive(0, cameraX*5);
+
+    SmartDashboard.putNumber("cameraX", cameraX);
   }
 
   @Override

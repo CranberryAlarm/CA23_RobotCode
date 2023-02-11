@@ -116,13 +116,16 @@ public class Drivetrain {
 
   /** Sets speeds to the drivetrain motors. */
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
-    var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
-    var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
-    double leftOutput = m_leftPIDController.calculate(m_leftEncoder.getRate(), speeds.leftMetersPerSecond);
-    double rightOutput = m_rightPIDController.calculate(m_rightEncoder.getRate(), speeds.rightMetersPerSecond);
+    // var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
+    // var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
+    // double leftOutput = m_leftPIDController.calculate(m_leftEncoder.getRate(), speeds.leftMetersPerSecond);
+    // double rightOutput = m_rightPIDController.calculate(m_rightEncoder.getRate(), speeds.rightMetersPerSecond);
 
-    m_leftGroup.setVoltage(leftOutput + leftFeedforward);
-    m_rightGroup.setVoltage(rightOutput + rightFeedforward);
+    // m_leftGroup.setVoltage(leftOutput + leftFeedforward);
+    // m_rightGroup.setVoltage(rightOutput + rightFeedforward);
+
+    m_leftGroup.setVoltage(speeds.leftMetersPerSecond);
+    m_rightGroup.setVoltage(speeds.rightMetersPerSecond);
   }
 
   public void slowMode(boolean slow) {
