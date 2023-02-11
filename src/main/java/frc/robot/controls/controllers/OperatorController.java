@@ -25,7 +25,7 @@ public class OperatorController extends FilteredController {
     return this.getRawButton(4);
   }
 
-  public boolean getWantsPivotBoost() {
+  public boolean getWantsPivotAntiBoost() {
     return this.getRawButton(6);
   }
 

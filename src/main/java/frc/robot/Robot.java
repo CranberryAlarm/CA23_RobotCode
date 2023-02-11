@@ -116,6 +116,7 @@ public class Robot extends TimedRobot {
     // // mathematics). Xbox controllers return positive values when you pull to
     // // the right by default.
     m_drive.slowMode(m_driverController.getWantsSlowMode());
+    m_drive.speedMode(m_driverController.getWantsSpeedMode());
     double rot = -m_rotLimiter.calculate(m_driverController.getTurnAxis()) *
         Drivetrain.kMaxAngularSpeed;
     m_drive.drive(xSpeed, rot);
@@ -143,7 +144,7 @@ public class Robot extends TimedRobot {
     }
 
     // Pivot controls
-    m_elevator.boostPivot(m_operatorController.getWantsPivotBoost());
+    m_elevator.antiBoostPivot(m_operatorController.getWantsPivotAntiBoost());
     m_elevator.boostPivot2(m_operatorController.getWantsPivotBoost2());
 
     // if (m_driverController.getWantsLower()) {

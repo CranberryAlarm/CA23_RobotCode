@@ -70,6 +70,9 @@ public class DriverController extends FilteredController {
     return this.getFilteredAxis(3) > kTriggerActivationThreshold;
   }
 
+  public boolean getWantsSpeedMode() {
+    return this.getFilteredAxis(2) > kTriggerActivationThreshold;
+  }
   // public boolean getWantsRaise() {
   // return this.getFilteredAxis(3) > kTriggerActivationThreshold;
   // // return this.getRawButton(2);

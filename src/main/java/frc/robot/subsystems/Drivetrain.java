@@ -45,6 +45,7 @@ public class Drivetrain {
   private static final int kEncoderResolution = -4096;
 
   private static final double kSlowModeRotScale = 0.1;
+  private static final double kSpeedModeScale = 2.0;
 
   private final SimulatableCANSparkMax m_leftLeader = new SimulatableCANSparkMax(Constants.kDrivetrainFLMotorId,
       MotorType.kBrushless);
@@ -113,6 +114,7 @@ public class Drivetrain {
   }
 
   private boolean m_slowMode = false;
+  private boolean m_speedMode = false;
 
   /** Sets speeds to the drivetrain motors. */
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
@@ -129,6 +131,10 @@ public class Drivetrain {
     m_slowMode = slow;
   }
 
+  public void speedMode(boolean speed) {
+    m_speedMode = speed;
+  }
+
   /**
    * Controls the robot using arcade drive.
    *
@@ -138,6 +144,8 @@ public class Drivetrain {
   public void drive(double xSpeed, double rot) {
     if (m_slowMode) {
       setSpeeds(m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0, rot * kSlowModeRotScale)));
+    } else if(m_speedMode) {
+      setSpeeds(m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed * kSpeedModeScale, 0, rot * kSlowModeRotScale)));
     } else {
       setSpeeds(m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0, rot)));
     }
