@@ -42,7 +42,6 @@ public class Robot extends TimedRobot {
   private Limelight limelight;
   private HashMap<String, Object> limelightInfo;
 
-  //
   private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
 
@@ -186,9 +185,9 @@ public class Robot extends TimedRobot {
     double cameraX = -cameraPose[0];
     double cameraZ = cameraPose[2];
 
-    m_drive.drive(cameraZ*0.5, cameraX*5);
+    m_drive.drive(cameraZ != 0 && (double) limelightInfo.get("tid") == 5 ? (cameraZ-1.8)*1.5 : 0, (double) limelightInfo.get("tid") == 5 ? cameraX*5 : 0);
 
-    SmartDashboard.putNumber("cameraX", cameraX);
+    SmartDashboard.putNumber("cameraZ", cameraZ);
   }
 
   @Override
