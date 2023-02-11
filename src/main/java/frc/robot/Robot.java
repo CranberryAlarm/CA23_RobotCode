@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
 
       m_trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
 
-      m_field.getObject("traj").setTrajectory(m_trajectory);
+      // m_field.getObject("traj").setTrajectory(m_trajectory);
 
     } catch (IOException ex) {
       DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
@@ -121,20 +121,24 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    double[] botTargetPose = (double[]) limelightInfo.get("botpose_targetspace");
-    double[] botAbsolutePose = (double[]) limelightInfo.get("botpose");
-    double currentTag = (double) limelightInfo.get("tid");
+    // double[] botTargetPose = (double[]) limelightInfo.get("botpose_targetspace");
+    // double[] botAbsolutePose = (double[]) limelightInfo.get("botpose");
+    // double currentTag = (double) limelightInfo.get("tid");
 
-    Pose2d currentPose = new Pose2d(botAbsolutePose[0], botAbsolutePose[1], Rotation2d.fromDegrees(botAbsolutePose[botAbsolutePose.length-1]));
-    Pose2d destination = new Pose2d(-4.7, 0.63, Rotation2d.fromDegrees(-180));
-    ArrayList<Pose2d> waypoints = new ArrayList<Pose2d>(Arrays.asList(currentPose, destination));
-
+    // Pose2d limePose = new Pose2d(botAbsolutePose[0], botAbsolutePose[1], Rotation2d.fromDegrees(botAbsolutePose[botAbsolutePose.length-1]))
+    Pose2d limePose = new Pose2d(0,0,Rotation2d.fromDegrees(0));
+    Pose2d convertedPose = limePose.relativeTo(new Pose2d(-8.2296, -8.2296/2, Rotation2d.fromDegrees(0)));
+    Pose2d destination = new Pose2d(5, 5, Rotation2d.fromDegrees(-180));
+    ArrayList<Pose2d> waypoints = new ArrayList<Pose2d>(Arrays.asList(convertedPose, destination));
+    // 8.2296 meters
     m_timer.reset();
     m_timer.start();
-    m_drive.resetOdometry(currentPose);
+    m_drive.resetOdometry(convertedPose);
+    m_field.setRobotPose(convertedPose);
 
     limelightTrajectory = TrajectoryGenerator.generateTrajectory(waypoints, new TrajectoryConfig(0.1, 0.05));
     SmartDashboard.putNumber("TrajectoryTime", limelightTrajectory.getTotalTimeSeconds());
+    m_field.getObject("limeTraj").setTrajectory(limelightTrajectory);
   }
 
   @Override
@@ -251,5 +255,6 @@ public class Robot extends TimedRobot {
     Trajectory.State state = limelightTrajectory.sample(time);
     ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), state);
     m_drive.drive(-speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
+    m_field.setRobotPose(m_drive.getPose());
   }
 }
