@@ -5,8 +5,12 @@ import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -24,6 +28,8 @@ import frc.robot.subsystems.Limelight;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Robot extends TimedRobot {
@@ -41,6 +47,7 @@ public class Robot extends TimedRobot {
   private UsbCamera m_camera;
   private Limelight limelight;
   private HashMap<String, Object> limelightInfo;
+  private Trajectory limelightTrajectory;
 
   private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
@@ -113,6 +120,24 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void teleopInit() {
+    double[] botTargetPose = (double[]) limelightInfo.get("botpose_targetspace");
+    double[] botAbsolutePose = (double[]) limelightInfo.get("botpose");
+    double currentTag = (double) limelightInfo.get("tid");
+
+    Pose2d currentPose = new Pose2d(botAbsolutePose[0], botAbsolutePose[1], Rotation2d.fromDegrees(botAbsolutePose[botAbsolutePose.length-1]));
+    Pose2d destination = new Pose2d(-4.7, 0.63, Rotation2d.fromDegrees(-180));
+    ArrayList<Pose2d> waypoints = new ArrayList<Pose2d>(Arrays.asList(currentPose, destination));
+
+    m_timer.reset();
+    m_timer.start();
+    m_drive.resetOdometry(currentPose);
+
+    limelightTrajectory = TrajectoryGenerator.generateTrajectory(waypoints, new TrajectoryConfig(0.1, 0.05));
+    SmartDashboard.putNumber("TrajectoryTime", limelightTrajectory.getTotalTimeSeconds());
+  }
+
+  @Override
   public void teleopPeriodic() {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
@@ -181,13 +206,20 @@ public class Robot extends TimedRobot {
     m_elevator.periodic();
     m_elevator.outputTelemetry();
 
-    double[] cameraPose = (double[]) limelightInfo.get("targetpose_cameraspace");
-    double cameraX = -cameraPose[0];
-    double cameraZ = cameraPose[2];
+    // double[] cameraPose = (double[]) limelightInfo.get("targetpose_cameraspace");
+    // double cameraX = -cameraPose[0];
+    // double cameraZ = cameraPose[2];
+    // m_drive.drive(cameraZ != 0 && (double) limelightInfo.get("tid") == 5 ? (cameraZ-1.8)*1.5 : 0, (double) limelightInfo.get("tid") == 5 ? cameraX*5 : 0);
+    // SmartDashboard.putNumber("cameraZ", cameraZ);
 
-    m_drive.drive(cameraZ != 0 && (double) limelightInfo.get("tid") == 5 ? (cameraZ-1.8)*1.5 : 0, (double) limelightInfo.get("tid") == 5 ? cameraX*5 : 0);
+    // if (m_timer.get() < limelightTrajectory.getTotalTimeSeconds()) {
+    //   runTrajectory(limelightTrajectory, m_timer.get());
+    // }
+    // else {
+    //   m_drive.drive(0, 0);
+    // }
 
-    SmartDashboard.putNumber("cameraZ", cameraZ);
+    runTrajectory(limelightTrajectory, m_timer.get());
   }
 
   @Override
@@ -213,5 +245,11 @@ public class Robot extends TimedRobot {
     // Update the odometry in the sim.
     m_drive.simulationPeriodic();
     m_field.setRobotPose(m_drive.getPose());
+  }
+
+  private void runTrajectory(Trajectory limelightTrajectory, double time) {
+    Trajectory.State state = limelightTrajectory.sample(time);
+    ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), state);
+    m_drive.drive(-speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
   }
 }
