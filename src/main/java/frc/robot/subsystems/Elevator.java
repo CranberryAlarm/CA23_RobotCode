@@ -17,7 +17,7 @@ public class Elevator extends Subsystem {
   private static final double kExtensionPowerOut = 0.6;
   private static final double kExtensionPowerIn = -0.6;
   private static final double kPivotAntiBoostAmount = 19.5;
-  private static final double kPivotBoost2Amount = -15;
+  private static final double kPivotBoostAmount = -15;
 
   private static final double kPivotCLRampRate = 0.5;
   private static final double kExtensionCLRampRate = 0.5;
@@ -86,7 +86,7 @@ public class Elevator extends Subsystem {
     double pivot_target = 0.0;
     boolean is_pivot_pos_control = false;
     boolean is_pivot_anti_boosted = false;
-    boolean is_pivot_boosted2 = false;
+    boolean is_pivot_boosted = false;
 
     double extension_power = 0.0;
     double extension_target = 0.0;
@@ -152,8 +152,8 @@ public class Elevator extends Subsystem {
     mPeriodicIO.is_pivot_anti_boosted = boost;
   }
 
-  public void boostPivot2(boolean boost) {
-    mPeriodicIO.is_pivot_boosted2 = boost;
+  public void boostPivot(boolean boost) {
+    mPeriodicIO.is_pivot_boosted = boost;
   }
 
   @Override
@@ -167,8 +167,8 @@ public class Elevator extends Subsystem {
       if (mPeriodicIO.is_pivot_anti_boosted) {
         mPivotPIDController.setReference(mPeriodicIO.pivot_target + kPivotAntiBoostAmount,
             CANSparkMax.ControlType.kPosition);
-      } else if (mPeriodicIO.is_pivot_boosted2) {
-        mPivotPIDController.setReference(mPeriodicIO.pivot_target + kPivotBoost2Amount,
+      } else if (mPeriodicIO.is_pivot_boosted) {
+        mPivotPIDController.setReference(mPeriodicIO.pivot_target + kPivotBoostAmount,
             CANSparkMax.ControlType.kPosition);
       } else {
         mPivotPIDController.setReference(mPeriodicIO.pivot_target,

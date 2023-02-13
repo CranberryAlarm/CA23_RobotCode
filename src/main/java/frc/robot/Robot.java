@@ -145,7 +145,7 @@ public class Robot extends TimedRobot {
 
     // Pivot controls
     m_elevator.antiBoostPivot(m_operatorController.getWantsPivotAntiBoost());
-    m_elevator.boostPivot2(m_operatorController.getWantsPivotBoost2());
+    m_elevator.boostPivot(m_operatorController.getWantsPivotBoost());
 
     // if (m_driverController.getWantsLower()) {
     // m_elevator.lower();
