@@ -18,6 +18,7 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
@@ -40,8 +41,8 @@ public class Drivetrain {
   // 1/2 rotation per second.
   public static final double kMaxAngularSpeed = Math.PI * 0.7;
 
-  private static final double kTrackWidth = 0.381 * 2;
-  private static final double kWheelRadius = 0.0508;
+  private static final double kTrackWidth = Units.inchesToMeters(22.0);
+  private static final double kWheelRadius = Units.inchesToMeters(3.0);
   private static final int kEncoderResolution = -4096;
 
   private static final double kSlowModeRotScale = 0.1;
