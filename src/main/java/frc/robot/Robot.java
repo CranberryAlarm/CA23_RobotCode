@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
     // Pose2d limePose = new Pose2d(botAbsolutePose[0], botAbsolutePose[1], Rotation2d.fromDegrees(botAbsolutePose[botAbsolutePose.length-1]))
     Pose2d limelightPose = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
     Pose2d convertedPose = limelightPose.relativeTo(new Pose2d(-8.2296, -8.2296/2, Rotation2d.fromDegrees(0)));
-    Pose2d destination = new Pose2d(1, 0, Rotation2d.fromDegrees(0));
+    Pose2d destination = new Pose2d(3, 0, Rotation2d.fromDegrees(0));
     Pose2d convertedDestination = destination.relativeTo(new Pose2d(-8.2296, -8.2296/2, Rotation2d.fromDegrees(0)));
     ArrayList<Pose2d> waypoints = new ArrayList<Pose2d>(Arrays.asList(convertedPose, convertedDestination));
     
@@ -137,7 +137,7 @@ public class Robot extends TimedRobot {
     m_drive.resetOdometry(convertedPose);
     m_field.setRobotPose(convertedPose);
 
-    limelightTrajectory = TrajectoryGenerator.generateTrajectory(waypoints, new TrajectoryConfig(0.5, 0.1));
+    limelightTrajectory = TrajectoryGenerator.generateTrajectory(waypoints, new TrajectoryConfig(0.5, .25));
     SmartDashboard.putNumber("TrajectoryTime", limelightTrajectory.getTotalTimeSeconds());
     m_field.getObject("limeTraj").setTrajectory(limelightTrajectory);
   }
