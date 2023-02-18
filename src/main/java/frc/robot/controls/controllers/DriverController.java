@@ -71,8 +71,30 @@ public class DriverController extends FilteredController {
   }
 
   public boolean getWantsSpeedMode() {
+    // return this.getFilteredAxis(2) > kTriggerActivationThreshold;
+    return false;
+  }
+
+  public boolean getWantsPivotBoost() {
     return this.getFilteredAxis(2) > kTriggerActivationThreshold;
   }
+
+  public boolean getWantsGroundPosition() {
+    return this.getPOV() == 180;
+  }
+
+  public boolean getWantsScorePosition() {
+    return this.getPOV() == 90;
+  }
+
+  public boolean getWantsPreGoalPosition() {
+    return this.getPOV() == 270;
+  }
+
+  public boolean getWantsStowPosition() {
+    return this.getPOV() == 0;
+  }
+
   // public boolean getWantsRaise() {
   // return this.getFilteredAxis(3) > kTriggerActivationThreshold;
   // // return this.getRawButton(2);
