@@ -1,13 +1,17 @@
 {
+  "Docking": {
+    "Data": []
+  },
   "MainWindow": {
     "GLOBAL": {
+      "fps": "120",
       "height": "727",
-      "maximized": "0",
+      "maximized": "1",
       "style": "0",
       "userScale": "2",
       "width": "1273",
-      "xpos": "282",
-      "ypos": "205"
+      "xpos": "0",
+      "ypos": "29"
     }
   },
   "Window": {
@@ -33,8 +37,8 @@
     },
     "###/SmartDashboard/Field": {
       "Collapsed": "0",
-      "Pos": "207,83",
-      "Size": "785,421"
+      "Pos": "389,162",
+      "Size": "1193,769"
     },
     "###Analog Inputs": {
       "Collapsed": "0",
@@ -44,21 +48,21 @@
     "###FMS": {
       "Collapsed": "0",
       "Pos": "3,513",
-      "Size": "283,146"
+      "Size": "336,164"
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "206,62",
-      "Size": "796,73"
+      "Pos": "1019,63",
+      "Size": "976,82"
     },
     "###NetworkTables": {
       "Collapsed": "1",
-      "Pos": "206,44",
+      "Pos": "247,34",
       "Size": "750,230"
     },
     "###Other Devices": {
       "Collapsed": "0",
-      "Pos": "1003,21",
+      "Pos": "1629,165",
       "Size": "263,692"
     },
     "###PWM Outputs": {
@@ -79,12 +83,12 @@
     "###System Joysticks": {
       "Collapsed": "0",
       "Pos": "6,285",
-      "Size": "192,218"
+      "Size": "232,254"
     },
     "###Timing": {
       "Collapsed": "0",
       "Pos": "5,126",
-      "Size": "135,150"
+      "Size": "162,168"
     },
     "Debug##Default": {
       "Collapsed": "0",
@@ -94,7 +98,7 @@
     "Robot State": {
       "Collapsed": "0",
       "Pos": "5,20",
-      "Size": "92,99"
+      "Size": "109,114"
     }
   }
 }

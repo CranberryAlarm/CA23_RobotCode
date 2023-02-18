@@ -47,8 +47,9 @@ public class Drivetrain {
   private static final double kTrackWidth = Units.inchesToMeters(22.0);
   private static final double kWheelRadius = Units.inchesToMeters(3.0);
   private static final double kGearRatio = 10.61;
-  private static final int kEncoderResolution = 42;
+  private static final int kEncoderResolution = 4096;
   private static final double kMetersPerEncTick = (2 * Math.PI * kWheelRadius) / (kEncoderResolution * kGearRatio);
+  // private static final double kMetersPerEncTick = (2 * Math.PI * kWheelRadius) / kGearRatio;
 
   private static final double kSlowModeRotScale = 0.1;
 
@@ -67,8 +68,8 @@ public class Drivetrain {
   private final RelativeEncoder m_leftEncoder;
   private final RelativeEncoder m_rightEncoder;
 
-  private final PIDController m_leftPIDController = new PIDController(4, 0, 0);
-  private final PIDController m_rightPIDController = new PIDController(4, 0, 0);
+  private final PIDController m_leftPIDController = new PIDController(4, 0, 0.01);
+  private final PIDController m_rightPIDController = new PIDController(4, 0, 0.01);
 
   private final AHRS m_gyro = new AHRS();
 
@@ -77,8 +78,8 @@ public class Drivetrain {
   private final DifferentialDriveOdometry m_odometry;
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final SimpleMotorFeedforward m_leftFeedforward = new SimpleMotorFeedforward(1, 2);
-  private final SimpleMotorFeedforward m_rightFeedforward = new SimpleMotorFeedforward(1, 2);
+  private final SimpleMotorFeedforward m_leftFeedforward = new SimpleMotorFeedforward(0.65, 1.5);
+  private final SimpleMotorFeedforward m_rightFeedforward = new SimpleMotorFeedforward(0.65, 1.5);
 
   // Simulation classes help us simulate our robot
   // private final AnalogGyroSim m_gyroSim = new AnalogGyroSim(m_gyro);
@@ -92,13 +93,13 @@ public class Drivetrain {
 
   public Drivetrain() {
     m_leftLeader.restoreFactoryDefaults();
-    m_leftLeader.setIdleMode(IdleMode.kCoast);
+    m_leftLeader.setIdleMode(IdleMode.kBrake);
     m_leftFollower.restoreFactoryDefaults();
-    m_leftFollower.setIdleMode(IdleMode.kCoast);
+    m_leftFollower.setIdleMode(IdleMode.kBrake);
     m_rightLeader.restoreFactoryDefaults();
-    m_rightLeader.setIdleMode(IdleMode.kCoast);
+    m_rightLeader.setIdleMode(IdleMode.kBrake);
     m_rightFollower.restoreFactoryDefaults();
-    m_rightFollower.setIdleMode(IdleMode.kCoast);
+    m_rightFollower.setIdleMode(IdleMode.kBrake);
 
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
@@ -129,23 +130,26 @@ public class Drivetrain {
 
   /** Sets speeds to the drivetrain motors. */
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
-    // var leftFeedforward =
-    // m_leftFeedforward.calculate(speeds.leftMetersPerSecond);
-    // var rightFeedforward =
-    // m_rightFeedforward.calculate(speeds.rightMetersPerSecond);
+    var leftFeedforward = m_leftFeedforward.calculate(speeds.leftMetersPerSecond);
+    var rightFeedforward = m_rightFeedforward.calculate(speeds.rightMetersPerSecond);
     double leftOutput = m_leftPIDController.calculate(m_leftEncoder.getVelocity(), speeds.leftMetersPerSecond);
     double rightOutput = m_rightPIDController.calculate(-m_rightEncoder.getVelocity(), speeds.rightMetersPerSecond);
 
-    System.out.println("LeftSet: " + speeds.leftMetersPerSecond);
-    System.out.println("LeftActual: " + m_leftEncoder.getVelocity());
-    System.out.println("RightSet: " + speeds.rightMetersPerSecond);
-    System.out.println("RightActual: " + -m_rightEncoder.getVelocity());
+    // System.out.println("LeftSet: " + speeds.leftMetersPerSecond);
+    // System.out.println("LeftActual: " + m_leftEncoder.getVelocity());
+    // System.out.println("RightSet: " + speeds.rightMetersPerSecond);
+    // System.out.println("RightActual: " + -m_rightEncoder.getVelocity());
 
     // m_leftGroup.setVoltage(leftOutput + leftFeedforward);
     // m_rightGroup.setVoltage(rightOutput + rightFeedforward);
 
     m_leftGroup.setVoltage(leftOutput);
     m_rightGroup.setVoltage(rightOutput);
+
+    SmartDashboard.putNumber("leftSpeedSetPoint", speeds.leftMetersPerSecond);
+    SmartDashboard.putNumber("rightSpeedSetPoint", speeds.rightMetersPerSecond);
+    SmartDashboard.putNumber("leftVelocity", m_leftEncoder.getVelocity());
+    SmartDashboard.putNumber("rightVelocity", -m_rightEncoder.getVelocity());
 
     // m_leftGroup.setVoltage(speeds.leftMetersPerSecond);
     // m_rightGroup.setVoltage(speeds.rightMetersPerSecond);
@@ -212,5 +216,17 @@ public class Drivetrain {
   public void periodic() {
     updateOdometry();
     m_fieldSim.setRobotPose(getPose());
+  }
+
+  public void showSpeeds() {
+    SmartDashboard.putNumber("leftMeters", m_leftEncoder.getPositionConversionFactor());
+    SmartDashboard.putNumber("rightMeters", m_rightEncoder.getPositionConversionFactor());
+  }
+
+  public void setToCoast() {
+    m_leftLeader.setIdleMode(IdleMode.kCoast);
+    m_leftFollower.setIdleMode(IdleMode.kCoast);
+    m_rightLeader.setIdleMode(IdleMode.kCoast);
+    m_rightFollower.setIdleMode(IdleMode.kCoast);
   }
 }

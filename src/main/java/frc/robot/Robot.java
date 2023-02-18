@@ -122,22 +122,24 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // double[] botTargetPose = (double[]) limelightInfo.get("botpose_targetspace");
-    // double[] botAbsolutePose = (double[]) limelightInfo.get("botpose");
+    double[] botAbsolutePose = (double[]) limelightInfo.get("botpose");
     // double currentTag = (double) limelightInfo.get("tid");
 
-    // Pose2d limePose = new Pose2d(botAbsolutePose[0], botAbsolutePose[1], Rotation2d.fromDegrees(botAbsolutePose[botAbsolutePose.length-1]))
+    // Pose2d limelightPose = new Pose2d(botAbsolutePose[0], botAbsolutePose[1],
+    // Rotation2d.fromDegrees(botAbsolutePose[botAbsolutePose.length - 1]));
     Pose2d limelightPose = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
-    Pose2d convertedPose = limelightPose.relativeTo(new Pose2d(-8.2296, -8.2296/2, Rotation2d.fromDegrees(0)));
-    Pose2d destination = new Pose2d(3, 0, Rotation2d.fromDegrees(0));
-    Pose2d convertedDestination = destination.relativeTo(new Pose2d(-8.2296, -8.2296/2, Rotation2d.fromDegrees(0)));
+    Pose2d convertedPose = limelightPose.relativeTo(new Pose2d(-8.2296, -8.2296 / 2, Rotation2d.fromDegrees(0)));
+    // Pose2d destination = new Pose2d(-7.7, 2.7, Rotation2d.fromDegrees(-178));
+    Pose2d destination = new Pose2d(2, 0, Rotation2d.fromDegrees(0));
+    Pose2d convertedDestination = destination.relativeTo(new Pose2d(-8.2296, -8.2296 / 2, Rotation2d.fromDegrees(0)));
     ArrayList<Pose2d> waypoints = new ArrayList<Pose2d>(Arrays.asList(convertedPose, convertedDestination));
-    
+
     m_timer.reset();
     m_timer.start();
     m_drive.resetOdometry(convertedPose);
     m_field.setRobotPose(convertedPose);
 
-    limelightTrajectory = TrajectoryGenerator.generateTrajectory(waypoints, new TrajectoryConfig(0.5, .25));
+    limelightTrajectory = TrajectoryGenerator.generateTrajectory(waypoints, new TrajectoryConfig(0.5, 0.1));
     SmartDashboard.putNumber("TrajectoryTime", limelightTrajectory.getTotalTimeSeconds());
     m_field.getObject("limeTraj").setTrajectory(limelightTrajectory);
   }
@@ -211,20 +213,16 @@ public class Robot extends TimedRobot {
     m_elevator.periodic();
     m_elevator.outputTelemetry();
 
-    // double[] cameraPose = (double[]) limelightInfo.get("targetpose_cameraspace");
-    // double cameraX = -cameraPose[0];
-    // double cameraZ = cameraPose[2];
-    // m_drive.drive(cameraZ != 0 && (double) limelightInfo.get("tid") == 5 ? (cameraZ-1.8)*1.5 : 0, (double) limelightInfo.get("tid") == 5 ? cameraX*5 : 0);
-    // SmartDashboard.putNumber("cameraZ", cameraZ);
+    double[] cameraPose = (double[]) limelightInfo.get("targetpose_cameraspace");
+    double cameraX = -cameraPose[0];
+    double cameraZ = cameraPose[2];
+    double primaryTag = (double) limelightInfo.get("tid");
+    boolean error = Math.abs(cameraZ-1.8) > 0.2;
 
-    // if (m_timer.get() < limelightTrajectory.getTotalTimeSeconds()) {
-    //   runTrajectory(limelightTrajectory, m_timer.get());
-    // }
-    // else {
-    //   m_drive.drive(0, 0);
-    // }
+    m_drive.drive(primaryTag == 5 ? (error ? (cameraZ-1.8)*0.3 : 0) : 0, primaryTag == 5 ? (cameraX*0.3) : 0);
 
-    runTrajectory(limelightTrajectory, m_timer.get());
+    m_drive.showSpeeds();
+    // runTrajectory(limelightTrajectory, m_timer.get());
   }
 
   @Override
@@ -236,6 +234,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     m_intake.stop();
     m_elevator.stop();
+    m_drive.setToCoast();
   }
 
   @Override
