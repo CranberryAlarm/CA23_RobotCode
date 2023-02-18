@@ -9,8 +9,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -21,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.OperatorController;
+import frc.robot.subsystems.Autonomous;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
@@ -28,8 +27,6 @@ import frc.robot.subsystems.Limelight;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Robot extends TimedRobot {
@@ -44,10 +41,10 @@ public class Robot extends TimedRobot {
   private final Drivetrain m_drive = new Drivetrain();
   private final Elevator m_elevator = Elevator.getInstance();
   private final Intake m_intake = Intake.getInstance();
+  private Autonomous auto;
   private UsbCamera m_camera;
   private Limelight limelight;
   private HashMap<String, Object> limelightInfo;
-  private Trajectory limelightTrajectory;
 
   private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
@@ -70,6 +67,9 @@ public class Robot extends TimedRobot {
     // Limelight setup
     limelight = new Limelight();
     limelightInfo = new HashMap<String, Object>();
+
+    // Auto setup
+    auto = new Autonomous();
 
     // Use the pathweaver trajectory
     try {
@@ -107,63 +107,32 @@ public class Robot extends TimedRobot {
     m_timer.reset();
     m_timer.start();
 
-    m_drive.resetOdometry(m_trajectory.getInitialPose());
-    m_field.setRobotPose(m_trajectory.getInitialPose());
+    m_drive.resetOdometry(auto.addWaypoint(0, 0, 0));
+    auto.addWaypoint(3, 0, kDefaultPeriod);
+    auto.addWaypoint(2.75, -1, -90);
+    auto.createTrajectory();
+
+    // m_drive.resetOdometry(m_trajectory.getInitialPose());
+    // m_field.setRobotPose(m_trajectory.getInitialPose());
   }
 
   @Override
   public void autonomousPeriodic() {
-    double elapsed = m_timer.get();
-    Trajectory.State reference = m_trajectory.sample(elapsed);
-    ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
-    m_drive.drive(speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
+    // double elapsed = m_timer.get();
+    // Trajectory.State reference = m_trajectory.sample(elapsed);
+    // ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
+    // m_drive.drive(speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
+
+    auto.runTrajectory(m_drive, m_ramsete, m_timer.get());
   }
 
   @Override
   public void teleopInit() {
-    // double[] botTargetPose = (double[]) limelightInfo.get("botpose_targetspace");
-    // double[] botAbsolutePose = (double[]) limelightInfo.get("botpose");
-    // double currentTag = (double) limelightInfo.get("tid");
-
-    Pose2d limelightPose = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
-    Pose2d convertedPose = limelightPose.relativeTo(new Pose2d(-8.2296, -8.2296 / 2, Rotation2d.fromDegrees(0)));
-    
-    Pose2d midpoint1 = new Pose2d(3, 0, Rotation2d.fromDegrees(0));
-    Pose2d convertedMidpoint1 = midpoint1.relativeTo(new Pose2d(-8.2296, -8.2296 / 2, Rotation2d.fromDegrees(0)));
-    
-    Pose2d midpoint2 = new Pose2d(midpoint1.getX() + 2.75, midpoint1.getY() - 1, Rotation2d.fromDegrees(-90));
-    Pose2d convertedMidpoint2 = midpoint2.relativeTo(new Pose2d(-8.2296, -8.2296 / 2, Rotation2d.fromDegrees(0)));
-
-    Pose2d midpoint3 = new Pose2d(midpoint2.getX(), midpoint1.getY() - 3, midpoint2.getRotation());
-    Pose2d convertedMidpoint3 = midpoint3.relativeTo(new Pose2d(-8.2296, -8.2296 / 2, Rotation2d.fromDegrees(0)));
-
-    Pose2d midpoint4 = new Pose2d(midpoint3.getX() + 1.75, midpoint3.getY() - 1.75, Rotation2d.fromDegrees(midpoint3.getRotation().getDegrees() + 90));
-    Pose2d convertedMidpoint4 = midpoint4.relativeTo(new Pose2d(-8.2296, -8.2296 / 2, Rotation2d.fromDegrees(0)));
-
-    Pose2d midpoint5 = new Pose2d(midpoint4.getX() + 1.75, midpoint4.getY() + 1.75, Rotation2d.fromDegrees(midpoint4.getRotation().getDegrees() + 90));
-    Pose2d convertedMidpoint5 = midpoint5.relativeTo(new Pose2d(-8.2296, -8.2296 / 2, Rotation2d.fromDegrees(0)));
-
-    Pose2d midpoint6 = new Pose2d(midpoint5.getX() + 3.4, midpoint5.getY() + 3.4, Rotation2d.fromDegrees(midpoint5.getRotation().getDegrees() - 90));
-    Pose2d convertedMidpoint6 = midpoint6.relativeTo(new Pose2d(-8.2296, -8.2296 / 2, Rotation2d.fromDegrees(0)));
-    
-    ArrayList<Pose2d> waypoints = new ArrayList<Pose2d>(Arrays.asList(
-      convertedPose,
-      convertedMidpoint1,
-      convertedMidpoint2,
-      convertedMidpoint3,
-      convertedMidpoint4,
-      convertedMidpoint5,
-      convertedMidpoint6
-    ));
-
     m_timer.reset();
     m_timer.start();
-    m_drive.resetOdometry(convertedPose);
-    m_field.setRobotPose(convertedPose);
 
-    limelightTrajectory = TrajectoryGenerator.generateTrajectory(waypoints, new TrajectoryConfig(1.5, 0.25));
-    SmartDashboard.putNumber("TrajectoryTime", limelightTrajectory.getTotalTimeSeconds());
-    m_field.getObject("limeTraj").setTrajectory(limelightTrajectory);
+    // SmartDashboard.putNumber("TrajectoryTime", limelightTrajectory.getTotalTimeSeconds());
+    // m_field.getObject("limeTraj").setTrajectory(limelightTrajectory);
   }
 
   @Override
@@ -246,7 +215,6 @@ public class Robot extends TimedRobot {
     m_drive.showSpeeds();
     SmartDashboard.putNumber("BotX", m_drive.getPose().getX());
     SmartDashboard.putNumber("BotY", m_drive.getPose().getY());
-    runTrajectory(limelightTrajectory, m_timer.get());
   }
 
   @Override
@@ -273,13 +241,6 @@ public class Robot extends TimedRobot {
   private void updateSim() {
     // Update the odometry in the sim.
     m_drive.simulationPeriodic();
-    m_field.setRobotPose(m_drive.getPose());
-  }
-
-  private void runTrajectory(Trajectory limelightTrajectory, double time) {
-    Trajectory.State state = limelightTrajectory.sample(time);
-    ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), state);
-    m_drive.drive(speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
     m_field.setRobotPose(m_drive.getPose());
   }
 }

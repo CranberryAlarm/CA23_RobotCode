@@ -93,6 +93,8 @@ public class Drivetrain {
       m_drivetrainSystem, DCMotor.getCIM(2), kGearRatio, kTrackWidth, kWheelRadius, null);
 
   public Drivetrain() {
+    m_gyro.reset();
+
     m_leftLeader.restoreFactoryDefaults();
     m_leftLeader.setIdleMode(IdleMode.kCoast);
     m_leftFollower.restoreFactoryDefaults();
