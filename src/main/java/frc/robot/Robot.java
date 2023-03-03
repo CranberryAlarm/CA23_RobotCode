@@ -148,7 +148,7 @@ public class Robot extends TimedRobot {
     m_drive.slowMode(m_driverController.getWantsSlowMode());
     double rot = -m_rotLimiter.calculate(m_driverController.getTurnAxis()) *
         Drivetrain.kMaxAngularSpeed;
-    // m_drive.drive(xSpeed, rot);
+    m_drive.drive(xSpeed, rot);
 
     // // Intake controls
     if (m_driverController.getWantsIntakeOpen()) {
@@ -226,7 +226,6 @@ public class Robot extends TimedRobot {
     m_drive.resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
     m_intake.stop();
     m_elevator.stop();
-    m_drive.setToCoast();
   }
 
   @Override

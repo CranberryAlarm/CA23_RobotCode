@@ -22,8 +22,6 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.AnalogGyro;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
@@ -68,8 +66,8 @@ public class Drivetrain {
   private final RelativeEncoder m_leftEncoder;
   private final RelativeEncoder m_rightEncoder;
 
-  private final PIDController m_leftPIDController = new PIDController(4, 0, 0.01);
-  private final PIDController m_rightPIDController = new PIDController(4, 0, 0.01);
+  private final PIDController m_leftPIDController = new PIDController(2, 0, 0);
+  private final PIDController m_rightPIDController = new PIDController(2 , 0, 0);
 
   private final AHRS m_gyro = new AHRS();
 
@@ -226,10 +224,10 @@ public class Drivetrain {
     SmartDashboard.putNumber("rightMeters", -m_rightEncoder.getPosition());
   }
 
-  public void setToCoast() {
-    m_leftLeader.setIdleMode(IdleMode.kCoast);
-    m_leftFollower.setIdleMode(IdleMode.kCoast);
-    m_rightLeader.setIdleMode(IdleMode.kCoast);
-    m_rightFollower.setIdleMode(IdleMode.kCoast);
-  }
+  // public void setToCoast() {
+  //   m_leftLeader.setIdleMode(IdleMode.kCoast);
+  //   m_leftFollower.setIdleMode(IdleMode.kCoast);
+  //   m_rightLeader.setIdleMode(IdleMode.kCoast);
+  //   m_rightFollower.setIdleMode(IdleMode.kCoast);
+  // }
 }
