@@ -66,8 +66,8 @@ public class Drivetrain {
   private final RelativeEncoder m_leftEncoder;
   private final RelativeEncoder m_rightEncoder;
 
-  private final PIDController m_leftPIDController = new PIDController(2, 0, 0);
-  private final PIDController m_rightPIDController = new PIDController(2 , 0, 0);
+  private final PIDController m_leftPIDController = new PIDController(4, 0, 0);
+  private final PIDController m_rightPIDController = new PIDController(4 , 0, 0);
 
   private final AHRS m_gyro = new AHRS();
 
