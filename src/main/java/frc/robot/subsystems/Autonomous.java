@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -31,18 +29,11 @@ public class Autonomous {
      * @param y Amount the robot should move in the Y direction (in meters)
      * @param rotation How much the robot should turn (in degrees)
      */
-    public Pose2d addWaypoint(double x, double y, double rotation) {
-        Pose2d pose = new Pose2d();
-        if (waypoints.size() > 1) {
-            Pose2d previous = waypoints.get(waypoints.size()-1);
-            pose = new Pose2d(previous.getX() + x, previous.getY() + y, new Rotation2d(previous.getRotation().getDegrees() + rotation));
-        }
-        else {
-            pose = new Pose2d(x, y, Rotation2d.fromDegrees(rotation));
-        }
+    public void addWaypoint(double x, double y, double rotation) {
+        Pose2d previous = waypoints.get(waypoints.size()-1);
+        Pose2d pose = new Pose2d(previous.getX() + x, previous.getY() + y, new Rotation2d(previous.getRotation().getDegrees() + rotation));
         Pose2d converted = toFieldPose(pose);
         waypoints.add(converted);
-        return converted;
     }
 
     public void createTrajectory() {
@@ -53,6 +44,12 @@ public class Autonomous {
         Trajectory.State state = limelightTrajectory.sample(time);
         ChassisSpeeds speeds = ramsete.calculate(drive.getPose(), state);
         drive.drive(speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
+    }
+
+    public void resetOdometry(double x, double y, double rotation, Drivetrain drive) {
+        Pose2d reset = toFieldPose(new Pose2d(x, y, Rotation2d.fromDegrees(rotation)));
+        drive.resetOdometry(reset);
+        waypoints.add(reset);
     }
 
     /**

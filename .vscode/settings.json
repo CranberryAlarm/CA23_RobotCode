@@ -26,5 +26,10 @@
     }
   ],
   "java.test.defaultConfig": "WPIlibUnitTests",
-  "wpilib.selectDefaultSimulateExtension": true
+  "wpilib.selectDefaultSimulateExtension": true,
+  "cSpell.words": [
+    "Ramsete",
+    "wpilib"
+  ],
+  "cSpell.enabled": false
 }

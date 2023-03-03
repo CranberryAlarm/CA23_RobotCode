@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -153,6 +152,7 @@ public class Drivetrain {
     SmartDashboard.putNumber("rightSpeedSetPoint", speeds.rightMetersPerSecond);
     SmartDashboard.putNumber("leftVelocity", m_leftEncoder.getVelocity());
     SmartDashboard.putNumber("rightVelocity", -m_rightEncoder.getVelocity());
+    SmartDashboard.putNumber("Gyro", m_gyro.getAngle());
 
     // m_leftGroup.setVoltage(speeds.leftMetersPerSecond);
     // m_rightGroup.setVoltage(speeds.rightMetersPerSecond);

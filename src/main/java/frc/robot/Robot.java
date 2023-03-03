@@ -7,7 +7,6 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -107,9 +106,9 @@ public class Robot extends TimedRobot {
     m_timer.reset();
     m_timer.start();
 
-    m_drive.resetOdometry(auto.addWaypoint(0, 0, 0));
-    auto.addWaypoint(3, 0, kDefaultPeriod);
-    auto.addWaypoint(2.75, -1, -90);
+    auto.resetOdometry(0, 0, 0, m_drive);
+    auto.addWaypoint(1, 0, 0);
+    // auto.addWaypoint(2.75, -1, -90);
     auto.createTrajectory();
 
     // m_drive.resetOdometry(m_trajectory.getInitialPose());
