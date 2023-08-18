@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.autonomous.AutoRunner;
+import frc.robot.autonomous.AutoRunner.AutoMode;
+import frc.robot.autonomous.tasks.Task;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.OperatorController;
 import frc.robot.subsystems.Drivetrain;
@@ -33,7 +36,7 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
   // Robot subsystems
-  private final Drivetrain m_drive = new Drivetrain();
+  private final Drivetrain m_drive = Drivetrain.getInstance();
   private final Elevator m_elevator = Elevator.getInstance();
   private final Intake m_intake = Intake.getInstance();
   private UsbCamera m_camera;
@@ -44,6 +47,9 @@ public class Robot extends TimedRobot {
 
   private final String trajectoryJSON = "Back-up.wpilib.json";
   private Trajectory m_trajectory;
+
+  private AutoRunner m_autoRunner = AutoRunner.getInstance();
+  private Task m_currentTask;
 
   private final Field2d m_field = new Field2d();
 
@@ -56,29 +62,6 @@ public class Robot extends TimedRobot {
     m_camera = CameraServer.startAutomaticCapture();
     m_camera.setFPS(30);
     m_camera.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
-
-    // Use the pathweaver trajectory
-    try {
-      Path trajectoryPath = null;
-
-      if (RobotBase.isReal()) {
-        System.out.println("Running on the robot!");
-        trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve("paths/" +
-            trajectoryJSON);
-      } else {
-        System.out.println("Running in simulation!");
-        trajectoryPath = Filesystem.getLaunchDirectory().toPath().resolve("PathWeaver/output/" +
-            trajectoryJSON);
-      }
-
-      m_trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-
-      m_field.getObject("traj").setTrajectory(m_trajectory);
-
-    } catch (IOException ex) {
-      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
-          ex.getStackTrace());
-    }
   }
 
   @Override
@@ -89,19 +72,36 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_timer.reset();
-    m_timer.start();
+    m_drive.brakeOff();
 
-    m_drive.resetOdometry(m_trajectory.getInitialPose());
-    m_field.setRobotPose(m_trajectory.getInitialPose());
+    m_autoRunner.setAutoMode(AutoMode.DO_NOTHING);
+    m_currentTask = m_autoRunner.getNextTask();
+
+    // Start the first task
+    if (m_currentTask != null) {
+      m_currentTask.start();
+    }
   }
 
   @Override
   public void autonomousPeriodic() {
-    double elapsed = m_timer.get();
-    Trajectory.State reference = m_trajectory.sample(elapsed);
-    ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
-    m_drive.drive(speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
+    // If there is a current task, run it
+    if (m_currentTask != null) {
+      // Run the current task
+      m_currentTask.update();
+      m_currentTask.updateSim();
+
+      // If the current task is finished, get the next task
+      if (m_currentTask.isFinished()) {
+        m_currentTask.done();
+        m_currentTask = m_autoRunner.getNextTask();
+
+        // Start the next task
+        if (m_currentTask != null) {
+          m_currentTask.start();
+        }
+      }
+    }
   }
 
   @Override
