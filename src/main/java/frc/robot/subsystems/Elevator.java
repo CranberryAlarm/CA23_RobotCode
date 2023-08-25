@@ -159,19 +159,19 @@ public class Elevator extends Subsystem {
 
   @Override
   public void periodic() {
-    if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
+    if (mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
       mPeriodicIO.is_pivot_low = true;
     } else {
       mPeriodicIO.is_pivot_low = false;
     }
 
-    if(mPeriodicIO.is_pivot_low) {
-      if(mPeriodicIO.extension_power > 0) {
+    if (mPeriodicIO.is_pivot_low) { // TODO: mPeriodicIO.is_pivot_high? Don't hit Limelight!!!
+      if (mPeriodicIO.extension_power > 0) {
         mPeriodicIO.extension_power = 0;
       }
-      if(mPeriodicIO.is_extension_pos_control) {
-        if(mPeriodicIO.extension_target > mExtensionEncoder.getPosition())
-        mPeriodicIO.extension_target = mExtensionEncoder.getPosition();
+      if (mPeriodicIO.is_extension_pos_control) {
+        if (mPeriodicIO.extension_target > mExtensionEncoder.getPosition())
+          mPeriodicIO.extension_target = mExtensionEncoder.getPosition();
       }
     }
 
