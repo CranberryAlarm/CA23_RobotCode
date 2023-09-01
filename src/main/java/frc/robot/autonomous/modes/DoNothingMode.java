@@ -3,6 +3,7 @@ package frc.robot.autonomous.modes;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.autonomous.tasks.DoNothingTask;
+import frc.robot.autonomous.tasks.WaitTask;
 
 public class DoNothingMode extends AutoModeBase {
   @Override

@@ -13,17 +13,18 @@ public class GripperTask extends Task {
 
   @Override
   public void start() {
-
+    System.out.println("Gripper task start");
   }
 
   @Override
   public void update() {
-    if(m_open) {
+    if (m_open) {
       m_intake.open();
     } else {
       m_intake.close();
     }
     m_finished = true;
+    System.out.println("Gripper task completed!");
   }
 
   @Override
