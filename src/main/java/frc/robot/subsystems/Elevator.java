@@ -16,8 +16,8 @@ public class Elevator extends Subsystem {
   private static final double kPivotPowerIn = -0.7;
   private static final double kExtensionPowerOut = 0.6;
   private static final double kExtensionPowerIn = -0.6;
-  private static final double kPivotBoostAmount = -3;
-  private static final double kPivotBoost2Amount = -15;
+  private static final double kPivotAntiBoostAmount = 19.5;
+  private static final double kPivotBoostAmount = -15;
 
   private static final double kPivotCLRampRate = 0.5;
   private static final double kExtensionCLRampRate = 0.5;
@@ -85,8 +85,9 @@ public class Elevator extends Subsystem {
     double pivot_power = 0.0;
     double pivot_target = 0.0;
     boolean is_pivot_pos_control = false;
+    boolean is_pivot_anti_boosted = false;
     boolean is_pivot_boosted = false;
-    boolean is_pivot_boosted2 = false;
+    boolean is_pivot_low = true;
 
     double extension_power = 0.0;
     double extension_target = 0.0;
@@ -148,27 +149,43 @@ public class Elevator extends Subsystem {
     mPeriodicIO.extension_target = Constants.kExtensionHighGoalCount;
   }
 
+  public void antiBoostPivot(boolean boost) {
+    mPeriodicIO.is_pivot_anti_boosted = boost;
+  }
+
   public void boostPivot(boolean boost) {
     mPeriodicIO.is_pivot_boosted = boost;
   }
 
-  public void boostPivot2(boolean boost) {
-    mPeriodicIO.is_pivot_boosted2 = boost;
-  }
-
   @Override
   public void periodic() {
+    if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
+      mPeriodicIO.is_pivot_low = true;
+    } else {
+      mPeriodicIO.is_pivot_low = false;
+    }
+
+    if(mPeriodicIO.is_pivot_low) {
+      if(mPeriodicIO.extension_power > 0) {
+        mPeriodicIO.extension_power = 0;
+      }
+      if(mPeriodicIO.is_extension_pos_control) {
+        if(mPeriodicIO.extension_target > mExtensionEncoder.getPosition())
+        mPeriodicIO.extension_target = mExtensionEncoder.getPosition();
+      }
+    }
+
     writePeriodicOutputs();
   }
 
   @Override
   public void writePeriodicOutputs() {
     if (mPeriodicIO.is_pivot_pos_control) {
-      if (mPeriodicIO.is_pivot_boosted) {
-        mPivotPIDController.setReference(mPeriodicIO.pivot_target + kPivotBoostAmount,
+      if (mPeriodicIO.is_pivot_anti_boosted) {
+        mPivotPIDController.setReference(mPeriodicIO.pivot_target + kPivotAntiBoostAmount,
             CANSparkMax.ControlType.kPosition);
-      } else if (mPeriodicIO.is_pivot_boosted2) {
-        mPivotPIDController.setReference(mPeriodicIO.pivot_target + kPivotBoost2Amount,
+      } else if (mPeriodicIO.is_pivot_boosted) {
+        mPivotPIDController.setReference(mPeriodicIO.pivot_target + kPivotBoostAmount,
             CANSparkMax.ControlType.kPosition);
       } else {
         mPivotPIDController.setReference(mPeriodicIO.pivot_target,

@@ -25,11 +25,11 @@ public class OperatorController extends FilteredController {
     return this.getRawButton(4);
   }
 
-  public boolean getWantsPivotBoost() {
+  public boolean getWantsPivotAntiBoost() {
     return this.getRawButton(6);
   }
 
-  public boolean getWantsPivotBoost2() {
+  public boolean getWantsPivotBoost() {
     return this.getRawButton(5);
   }
 

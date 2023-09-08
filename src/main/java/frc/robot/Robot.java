@@ -116,6 +116,7 @@ public class Robot extends TimedRobot {
     // // mathematics). Xbox controllers return positive values when you pull to
     // // the right by default.
     m_drive.slowMode(m_driverController.getWantsSlowMode());
+    m_drive.speedMode(m_driverController.getWantsSpeedMode());
     double rot = -m_rotLimiter.calculate(m_driverController.getTurnAxis()) *
         Drivetrain.kMaxAngularSpeed;
     m_drive.drive(xSpeed, rot);
@@ -143,20 +144,20 @@ public class Robot extends TimedRobot {
     }
 
     // Pivot controls
-    m_elevator.boostPivot(m_operatorController.getWantsPivotBoost());
-    m_elevator.boostPivot2(m_operatorController.getWantsPivotBoost2());
+    m_elevator.antiBoostPivot(m_operatorController.getWantsPivotAntiBoost());
+    m_elevator.boostPivot(m_operatorController.getWantsPivotBoost() || m_driverController.getWantsPivotBoost());
 
     // if (m_driverController.getWantsLower()) {
     // m_elevator.lower();
     // } else if (m_driverController.getWantsRaise()) {
     // m_elevator.raise();
-    if (m_operatorController.getWantsGroundPosition()) {
+    if (m_operatorController.getWantsGroundPosition() || m_driverController.getWantsGroundPosition()) {
       m_elevator.goToPivotGround();
-    } else if (m_operatorController.getWantsPreGoalPosition()) {
+    } else if (m_operatorController.getWantsPreGoalPosition() || m_driverController.getWantsPreGoalPosition()) {
       m_elevator.goToPivotPreScore();
-    } else if (m_operatorController.getWantsScorePosition()) {
+    } else if (m_operatorController.getWantsScorePosition() || m_driverController.getWantsScorePosition()) {
       m_elevator.goToPivotScore();
-    } else if (m_operatorController.getWantsStowPosition()) {
+    } else if (m_operatorController.getWantsStowPosition() || m_driverController.getWantsStowPosition()) {
       m_elevator.goToPivotStow();
     } else if (m_operatorController.getWantsResetPivotEncoder()) {
       m_elevator.resetPivotEncoder();
