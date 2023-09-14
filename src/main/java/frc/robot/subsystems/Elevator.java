@@ -42,6 +42,9 @@ public class Elevator extends Subsystem {
   private SparkMaxLimitSwitch mExtensionLowerLimit;
   private SparkMaxLimitSwitch mExtensionUpperLimit;
 
+  private boolean mLimitStartPushed;
+  private int mHomeState;
+
   private PeriodicIO mPeriodicIO = new PeriodicIO();
 
   private Elevator() {
@@ -77,6 +80,9 @@ public class Elevator extends Subsystem {
 
     mExtensionLowerLimit = mExtensionMotor.getReverseLimitSwitch(Type.kNormallyOpen);
     mExtensionUpperLimit = mExtensionMotor.getForwardLimitSwitch(Type.kNormallyOpen);
+
+    mLimitStartPushed = mPivotLowerLimit.isPressed();
+    mHomeState = 0;
 
     mPeriodicIO = new PeriodicIO();
   }
@@ -157,25 +163,71 @@ public class Elevator extends Subsystem {
     mPeriodicIO.is_pivot_boosted = boost;
   }
 
+  public void home() {
+
+  }
+
+  /**
+   * 0 - not started
+   * 1 - rehome
+   * 2 - homing
+   * 3 - homed
+   * 
+   * @param state
+   */
+  public void setHomingState(int state) {
+    mHomeState = state;
+  }
+
+  public boolean isLimitStartedPushed() {
+    return mLimitStartPushed;
+  }
+
+  public int getHomeState() {
+    return mHomeState;
+  }
+
   @Override
   public void periodic() {
-    if (mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
-      mPeriodicIO.is_pivot_low = true;
+    if (mHomeState == 3) {
+      if (mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
+        mPeriodicIO.is_pivot_low = true;
+      } else {
+        mPeriodicIO.is_pivot_low = false;
+      }
+
+      if (mPeriodicIO.is_pivot_low) { // TODO: mPeriodicIO.is_pivot_high? Don't hit Limelight!!!
+        if (mPeriodicIO.extension_power > 0) {
+          mPeriodicIO.extension_power = 0;
+        }
+        if (mPeriodicIO.is_extension_pos_control) {
+          if (mPeriodicIO.extension_target > mExtensionEncoder.getPosition())
+            mPeriodicIO.extension_target = mExtensionEncoder.getPosition();
+        }
+      }
+      System.out.println("We are homed!!!!");
     } else {
-      mPeriodicIO.is_pivot_low = false;
-    }
-
-    if (mPeriodicIO.is_pivot_low) { // TODO: mPeriodicIO.is_pivot_high? Don't hit Limelight!!!
-      if (mPeriodicIO.extension_power > 0) {
-        mPeriodicIO.extension_power = 0;
+      mPeriodicIO.is_pivot_pos_control = false;
+      double homeSpeed = 0.1;
+      switch (mHomeState) {
+        case 1:
+          mPeriodicIO.pivot_power = -homeSpeed;
+          if (!mPivotLowerLimit.isPressed()) {
+            setHomingState(2);
+            stopPivot();
+          }
+          break;
+        case 2:
+          if (!mPivotLowerLimit.isPressed()) {
+            mPeriodicIO.pivot_power = homeSpeed;
+          } else {
+            setHomingState(3);
+            stopPivot();
+          }
+          break;
       }
-      if (mPeriodicIO.is_extension_pos_control) {
-        if (mPeriodicIO.extension_target > mExtensionEncoder.getPosition())
-          mPeriodicIO.extension_target = mExtensionEncoder.getPosition();
-      }
+      mPivotEncoder.setPosition(0);
     }
-
-    writePeriodicOutputs();
   }
 
   @Override
@@ -237,6 +289,12 @@ public class Elevator extends Subsystem {
     SmartDashboard.putNumber("Pivot encoder count:", mPivotEncoder.getPosition());
     SmartDashboard.putNumber("Pivot PID target:", mPeriodicIO.pivot_power);
     SmartDashboard.putBoolean("Pivot lower limit:", mPivotLowerLimit.isPressed());
+
+    SmartDashboard.putBoolean("Elevator/LimitSwitchActivated", mPivotLowerLimit.isPressed());
+    SmartDashboard.putNumber("Elevator/Home State", mHomeState);
+
+    SmartDashboard.putNumber("Elevator/Pivot/Motor Speed", mPivotMotor.get());
+    SmartDashboard.putBoolean("Elevator/Pivot/PeriodicIO Is_Pivot_Pos_Control", mPeriodicIO.is_pivot_pos_control);
 
     // Extension telemetry
     SmartDashboard.putNumber("Extension motor power:", mPeriodicIO.extension_power);

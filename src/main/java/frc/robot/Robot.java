@@ -68,6 +68,16 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     m_drive.periodic();
     m_intake.periodic();
+    m_elevator.outputTelemetry();
+
+    if (m_elevator.getHomeState() == 0) {
+      if (m_elevator.isLimitStartedPushed()) {
+        m_elevator.setHomingState(1);
+      } else {
+        m_elevator.setHomingState(2);
+      }
+    }
+    m_elevator.writePeriodicOutputs();
   }
 
   @Override
@@ -162,7 +172,9 @@ public class Robot extends TimedRobot {
     } else if (m_operatorController.getWantsResetPivotEncoder()) {
       m_elevator.resetPivotEncoder();
     } else {
-      m_elevator.stopPivot();
+      if (m_elevator.getHomeState() == 3) {
+        m_elevator.stopPivot();
+      }
     }
 
     if (m_driverController.getWantsAutoScore()) {
