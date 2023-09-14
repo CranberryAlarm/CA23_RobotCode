@@ -205,10 +205,9 @@ public class Elevator extends Subsystem {
             mPeriodicIO.extension_target = mExtensionEncoder.getPosition();
         }
       }
-      System.out.println("We are homed!!!!");
     } else {
       mPeriodicIO.is_pivot_pos_control = false;
-      double homeSpeed = 0.1;
+      double homeSpeed = 0.2;
       switch (mHomeState) {
         case 1:
           mPeriodicIO.pivot_power = -homeSpeed;
