@@ -23,6 +23,8 @@ import frc.robot.controls.controllers.OperatorController;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.PoseEstimator;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -53,6 +55,10 @@ public class Robot extends TimedRobot {
 
   private final Field2d m_field = new Field2d();
 
+  private final PoseEstimator m_poseEstimator = PoseEstimator.getInstance();
+  private Limelight m_rightLL = new Limelight("LL_R");
+  private Limelight m_leftLL = new Limelight("LL_L");
+
   @Override
   public void robotInit() {
     // Set up the Field2d object for simulation
@@ -68,7 +74,9 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     m_drive.periodic();
     m_intake.periodic();
+    m_poseEstimator.periodic();
     m_elevator.outputTelemetry();
+    m_poseEstimator.outputTelemetry();
 
     if (m_elevator.getHomeState() == 0) {
       if (m_elevator.isLimitStartedPushed()) {
@@ -78,6 +86,11 @@ public class Robot extends TimedRobot {
       }
     }
     m_elevator.writePeriodicOutputs();
+
+    if (m_rightLL.seesAprilTag() && m_leftLL.seesAprilTag()) {
+      m_poseEstimator.addVisionMeasurement(m_rightLL.getBotpose2D());
+      m_poseEstimator.addVisionMeasurement(m_leftLL.getBotpose2D());
+    }
   }
 
   @Override

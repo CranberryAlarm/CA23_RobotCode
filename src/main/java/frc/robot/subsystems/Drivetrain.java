@@ -23,6 +23,7 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.CAN;
 // import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
@@ -223,6 +224,14 @@ public class Drivetrain {
     return m_odometry.getPoseMeters();
   }
 
+  public CANSparkMax getLeftLeader() {
+    return m_leftLeader;
+  }
+
+  public CANSparkMax getRightLeader() {
+    return m_rightLeader;
+  }
+
   /** Update our simulation. This should be run every robot loop in simulation. */
   public void simulationPeriodic() {
     // To update our simulation, we set motor voltage inputs, update the
@@ -245,5 +254,8 @@ public class Drivetrain {
   public void periodic() {
     updateOdometry();
     m_fieldSim.setRobotPose(getPose());
+
+    SmartDashboard.putNumber("Drivetrain/LeftEncoderTicks", m_leftLeader.getEncoder().getPosition());
+    SmartDashboard.putNumber("Drivetrain/RightEncoderTicks", m_rightLeader.getEncoder().getPosition());
   }
 }

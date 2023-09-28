@@ -5,27 +5,44 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class PoseEstimator {
+public class PoseEstimator extends Subsystem {
   private AHRS m_gyro;
+
+  private static PoseEstimator m_instance;
 
   private Drivetrain m_drive;
   private DifferentialDrivePoseEstimator m_poseEstimator;
 
-  private Limelight LL_R;
-  private Limelight LL_L;
-
   private PoseEstimator() {
-    m_poseEstimator = new DifferentialDrivePoseEstimator(
-        m_drive.getKinematics(), m_gyro.getRotation2d(), 0, 0,
-        new Pose2d(0, 0, new Rotation2d(0))); // TODO: Check if this is right
+    m_drive = Drivetrain.getInstance();
 
     m_gyro = new AHRS();
 
-    m_drive = Drivetrain.getInstance();
+    m_poseEstimator = new DifferentialDrivePoseEstimator(
+        m_drive.getKinematics(), m_gyro.getRotation2d(), 0, 0,
+        new Pose2d(0, 0, new Rotation2d(0))); // TODO: Check if this is right
+  }
 
-    LL_R = new Limelight("LL_R");
-    LL_L = new Limelight("LL_L");
+  public static PoseEstimator getInstance() {
+    if (m_instance == null) {
+      m_instance = new PoseEstimator();
+    }
+    return m_instance;
+  }
+
+  public void setPose(Pose2d pose) {
+    m_poseEstimator.resetPosition(m_gyro.getRotation2d(), 0, 0, pose);
+  }
+
+  public void addVisionMeasurement(Pose2d pose) {
+    m_poseEstimator.addVisionMeasurement(pose, 0);
+  }
+
+  public Pose2d getPose() {
+    return m_poseEstimator.getEstimatedPosition();
   }
 
   public void resetOdometry(Pose2d pose) {
@@ -35,7 +52,26 @@ public class PoseEstimator {
     setPose(pose);
   }
 
-  public void setPose(Pose2d pose) {
-    m_poseEstimator.resetPosition(m_gyro.getRotation2d(), 0, 0, pose);
+  @Override
+  public void periodic() {
+    m_poseEstimator.updateWithTime(
+        Timer.getFPGATimestamp(),
+        m_gyro.getRotation2d(),
+        m_drive.getLeftLeader().getEncoder().getPosition(),
+        m_drive.getRightLeader().getEncoder().getPosition());
+  }
+
+  @Override
+  public void stop() {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void outputTelemetry() {
+    SmartDashboard.putNumber("PoseEstimator/X", m_poseEstimator.getEstimatedPosition().getX());
+    SmartDashboard.putNumber("PoseEstimator/Y", m_poseEstimator.getEstimatedPosition().getY());
+    SmartDashboard.putNumber("PoseEstimator/Rot", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+
   }
 }
