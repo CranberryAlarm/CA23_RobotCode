@@ -54,8 +54,10 @@ public class PoseEstimator extends Subsystem {
 
   @Override
   public void periodic() {
+    double current_time = Timer.getFPGATimestamp();
+
     m_poseEstimator.updateWithTime(
-        Timer.getFPGATimestamp(),
+        current_time,
         m_gyro.getRotation2d(),
         m_drive.getLeftLeader().getEncoder().getPosition(),
         m_drive.getRightLeader().getEncoder().getPosition());

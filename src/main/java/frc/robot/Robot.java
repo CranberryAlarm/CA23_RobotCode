@@ -75,8 +75,6 @@ public class Robot extends TimedRobot {
     m_drive.periodic();
     m_intake.periodic();
     m_poseEstimator.periodic();
-    m_elevator.outputTelemetry();
-    m_poseEstimator.outputTelemetry();
 
     if (m_elevator.getHomeState() == 0) {
       if (m_elevator.isLimitStartedPushed()) {
@@ -91,6 +89,9 @@ public class Robot extends TimedRobot {
       m_poseEstimator.addVisionMeasurement(m_rightLL.getBotpose2D());
       m_poseEstimator.addVisionMeasurement(m_leftLL.getBotpose2D());
     }
+
+    m_elevator.outputTelemetry();
+    m_poseEstimator.outputTelemetry();
   }
 
   @Override

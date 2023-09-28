@@ -112,6 +112,8 @@ public class Drivetrain {
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
     m_rightGroup.setInverted(true);
+    m_rightLeader.setInverted(true);
+    m_rightFollower.setInverted(true);
 
     // Set the distance per pulse for the drive encoders. We can simply use the
     // distance traveled for one rotation of the wheel divided by the encoder
@@ -120,7 +122,7 @@ public class Drivetrain {
     m_leftEncoder.setPosition(0.0);
     m_rightEncoder.setPosition(0.0);
 
-    m_rightGroup.setInverted(true);
+    // m_rightGroup.setInverted(true);
     SmartDashboard.putData("Field", m_fieldSim);
   }
 
