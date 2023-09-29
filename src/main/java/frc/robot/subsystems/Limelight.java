@@ -75,4 +75,15 @@ public class Limelight extends Subsystem {
     private Pose2d toFieldPose(Pose2d pose) {
         return pose.relativeTo(new Pose2d(-8.2296, -8.2296 / 2, Rotation2d.fromDegrees(0)));
     }
+
+    // TODO: Check to see if this works
+    static double[] getAveragePose(double[] limelightA, double[] limelightB) {
+        double[] averagePose = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+        for (int i = 0; i < limelightA.length; i++) {
+            averagePose[i] = (limelightA[i] + limelightB[i]) / 2.0;
+        }
+
+        return averagePose;
+    }
 }
