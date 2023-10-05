@@ -89,6 +89,10 @@ public class Robot extends TimedRobot {
       m_poseEstimator.addVisionMeasurement(m_rightLL.getBotpose2D());
       m_poseEstimator.addVisionMeasurement(m_leftLL.getBotpose2D());
     }
+    if (m_rightLL.seesAprilTag() && m_leftLL.seesAprilTag()) {
+      m_poseEstimator.addVisionMeasurement(m_rightLL.getBotpose2D());
+      m_poseEstimator.addVisionMeasurement(m_leftLL.getBotpose2D());
+    }
 
     m_elevator.outputTelemetry();
     m_poseEstimator.outputTelemetry();
@@ -132,7 +136,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
-    double xSpeed = -m_speedLimiter.calculate(m_driverController.getForwardAxis()) *
+    double xSpeed = -m_speedLimiter.calculate(-m_driverController.getTurnAxis()) *
         Drivetrain.kMaxSpeed;
 
     // // Get the rate of angular rotation. We are inverting this because we want a
@@ -141,7 +145,7 @@ public class Robot extends TimedRobot {
     // // the right by default.
     m_drive.slowMode(m_driverController.getWantsSlowMode());
     m_drive.speedMode(m_driverController.getWantsSpeedMode());
-    double rot = -m_rotLimiter.calculate(m_driverController.getTurnAxis()) *
+    double rot = -m_rotLimiter.calculate(-m_driverController.getForwardAxis()) *
         Drivetrain.kMaxAngularSpeed;
     m_drive.drive(xSpeed, rot);
 
