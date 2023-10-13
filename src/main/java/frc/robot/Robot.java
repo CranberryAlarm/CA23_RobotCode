@@ -20,6 +20,7 @@ import frc.robot.autonomous.AutoRunner.AutoMode;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.OperatorController;
+import frc.robot.simulation.Field;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
@@ -94,6 +95,8 @@ public class Robot extends TimedRobot {
       m_poseEstimator.addVisionMeasurement(m_leftLL.getBotpose2D());
     }
 
+    m_field.setRobotPose(m_poseEstimator.getPose());
+
     m_elevator.outputTelemetry();
     m_poseEstimator.outputTelemetry();
   }
@@ -102,7 +105,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_drive.brakeOff();
 
-    m_autoRunner.setAutoMode(AutoMode.TEST_MODE);
+    m_autoRunner.setAutoMode(AutoMode.DO_NOTHING);
     m_currentTask = m_autoRunner.getNextTask();
 
     // Start the first task

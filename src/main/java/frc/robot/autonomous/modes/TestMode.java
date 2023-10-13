@@ -2,10 +2,13 @@ package frc.robot.autonomous.modes;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.autonomous.tasks.DriveForwardTask;
 import frc.robot.autonomous.tasks.DriveTask;
 import frc.robot.autonomous.tasks.GripperTask;
-import frc.robot.autonomous.tasks.TurnTask;
+import frc.robot.autonomous.tasks.ParallelTask;
 import frc.robot.autonomous.tasks.WaitTask;
+import frc.robot.autonomous.tasks.Elevator.ElevatorTask;
+import frc.robot.autonomous.tasks.Elevator.ExtendTask;
 
 public class TestMode extends AutoModeBase {
   @Override
@@ -14,12 +17,14 @@ public class TestMode extends AutoModeBase {
   }
 
   public void queueTasks() {
-    // queueTask(new GripperTask(true));
-    // queueTask(new WaitTask(2));
-    // queueTask(new GripperTask(false));
-    // queueTask(new WaitTask(5));
-    // queueTask(new DriveTask(0.75, 2));
-    // queueTask(new WaitTask(3));
-    queueTask(new TurnTask(-1, 20));
+    // queueTask(new ParallelTask(
+    queueTask(new ExtendTask(true));
+    queueTask(new ElevatorTask(0.2, 2));
+    queueTask(new GripperTask(false));
+    queueTask(new WaitTask(0.2));
+    queueTask(new ExtendTask(false));
+    // new ParallelTask(
+    queueTask(new DriveTask(-0.5, 5));
+    queueTask(new ElevatorTask(0.2, 3));
   }
 }

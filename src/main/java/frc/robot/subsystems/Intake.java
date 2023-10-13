@@ -20,6 +20,7 @@ public class Intake extends Subsystem {
 
   private Intake() {
     mIntakeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.kIntakeSolenoidForwardId);
+    mIntakeSolenoid.set(true);
 
     mPeriodicIO = new PeriodicIO();
   }
@@ -43,7 +44,7 @@ public class Intake extends Subsystem {
 
   @Override
   public void stop() {
-    mIntakeSolenoid.set(false);
+    mIntakeSolenoid.set(true);
   }
 
   @Override

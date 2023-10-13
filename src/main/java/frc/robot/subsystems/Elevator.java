@@ -273,6 +273,10 @@ public class Elevator extends Subsystem {
     }
   }
 
+  public void setPivotPower(double power) {
+    mPeriodicIO.pivot_power = power;
+  }
+
   public void resetPivotEncoder() {
     mPivotEncoder.setPosition(0);
   }

@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveTask extends Task {
-
   private Drivetrain m_drive = Drivetrain.getInstance();
   private double m_speed, m_time, m_startTime;
   private boolean m_finished = false;
