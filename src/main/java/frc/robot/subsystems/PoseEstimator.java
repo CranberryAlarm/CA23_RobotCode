@@ -38,7 +38,9 @@ public class PoseEstimator extends Subsystem {
   }
 
   public void addVisionMeasurement(Pose2d pose) {
-    m_poseEstimator.addVisionMeasurement(pose, 0);
+    double current_time = Timer.getFPGATimestamp();
+
+    m_poseEstimator.addVisionMeasurement(pose, current_time);
   }
 
   public Pose2d getPose() {
