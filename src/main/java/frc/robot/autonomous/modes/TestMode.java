@@ -20,11 +20,11 @@ public class TestMode extends AutoModeBase {
     // queueTask(new ParallelTask(
     queueTask(new ExtendTask(true));
     queueTask(new ElevatorTask(0.2, 2));
-    queueTask(new GripperTask(false));
-    queueTask(new WaitTask(0.2));
+    queueTask(new GripperTask(true));
+    queueTask(new WaitTask(1));
     queueTask(new ExtendTask(false));
     // new ParallelTask(
-    queueTask(new DriveTask(-0.5, 5));
+    queueTask(new DriveTask(0.5, 5));
     queueTask(new ElevatorTask(0.2, 3));
   }
 }

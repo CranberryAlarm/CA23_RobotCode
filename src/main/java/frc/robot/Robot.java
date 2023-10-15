@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_drive.brakeOff();
 
-    m_autoRunner.setAutoMode(AutoMode.DO_NOTHING);
+    m_autoRunner.setAutoMode(AutoMode.TEST_MODE);
     m_currentTask = m_autoRunner.getNextTask();
 
     // Start the first task
