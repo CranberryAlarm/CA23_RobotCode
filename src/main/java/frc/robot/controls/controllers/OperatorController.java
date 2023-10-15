@@ -9,6 +9,7 @@ public class OperatorController extends FilteredController {
     super(port, useDeadband, useSquaredInput);
   }
 
+  // Pivot
   public boolean getWantsGroundPosition() {
     return this.getRawButton(1);
   }
@@ -33,6 +34,20 @@ public class OperatorController extends FilteredController {
     return this.getRawButton(5);
   }
 
+  // Extension
+  public boolean getWantsExtensionStow() {
+    return this.getPOV() == 0;
+  }
+  
+  public boolean getWantsExtensionMidGoal() {
+    return this.getPOV() == 90;
+  }
+  
+  public boolean getWantsExtensionHighGoal() {
+    return this.getPOV() == 180;
+  }
+
+  // Reset Encoders
   public boolean getWantsResetPivotEncoder() {
     return this.getRawButton(8);
   }
@@ -50,11 +65,11 @@ public class OperatorController extends FilteredController {
 // set extend to brake
 
 // public boolean getWantsExtend() {
-// return this.getBButton();
-// }
-
-// public boolean getWantsRetract() {
-// return this.getAButton();
+  // return this.getBButton();
+  // }
+  
+  // public boolean getWantsRetract() {
+    // return this.getAButton();
 // }
 
 // public boolean getWantsRaise() {
