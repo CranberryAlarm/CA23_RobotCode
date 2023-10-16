@@ -37,13 +37,13 @@ import frc.robot.Constants;
 
 public class Drivetrain {
   // 3 meters per second.
-  public static final double kMaxSpeed = 1.0;
+  public static final double kMaxSpeed = 2.0;
 
   // 3 meters per second.
   public static final double kMaxAcceleration = 2.0;
 
   // 1/2 rotation per second.
-  public static final double kMaxAngularSpeed = Math.PI * 0.7;
+  public static final double kMaxAngularSpeed = Math.PI * 0.5;
 
   private static final double kTrackWidth = Units.inchesToMeters(22.0);
   private static final double kWheelRadius = Units.inchesToMeters(3.0);
@@ -110,10 +110,12 @@ public class Drivetrain {
 
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
-    // gearbox is constructed, you might have to invert the left side instead.
-    m_rightGroup.setInverted(true);
-    m_rightLeader.setInverted(true);
-    m_rightFollower.setInverted(true);
+    // gearbox is constructed, you might have to invert the right side instead.
+    m_rightLeader.setInverted(false);
+    m_rightFollower.setInverted(false);
+
+    m_leftLeader.setInverted(true);
+    m_leftFollower.setInverted(true);
 
     // Set the distance per pulse for the drive encoders. We can simply use the
     // distance traveled for one rotation of the wheel divided by the encoder

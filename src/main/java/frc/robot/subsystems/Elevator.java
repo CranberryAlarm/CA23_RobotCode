@@ -190,7 +190,7 @@ public class Elevator extends Subsystem {
   @Override
   public void periodic() {
     if (mHomeState == 3) {
-      if (mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
+      if (mPivotEncoder.getPosition() > Constants.kPivotScoreCount+1) {
         mPeriodicIO.is_pivot_low = true;
       } else {
         mPeriodicIO.is_pivot_low = false;

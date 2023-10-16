@@ -59,12 +59,12 @@ public class DriverController extends FilteredController {
   }
 
   public boolean getWantsSpeedMode() {
-    // return this.getFilteredAxis(2) > kTriggerActivationThreshold;
-    return false;
+    return this.getFilteredAxis(2) > kTriggerActivationThreshold;
   }
 
   public boolean getWantsPivotBoost() {
-    return this.getFilteredAxis(2) > kTriggerActivationThreshold;
+    // return this.getFilteredAxis(2) > kTriggerActivationThreshold;
+    return false;
   }
 
   // public boolean getWantsRaise() {

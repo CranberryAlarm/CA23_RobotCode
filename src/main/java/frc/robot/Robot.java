@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_drive.brakeOff();
 
-    m_autoRunner.setAutoMode(AutoMode.DO_NOTHING);
+    m_autoRunner.setAutoMode(AutoMode.TEST_MODE);
     m_currentTask = m_autoRunner.getNextTask();
 
     // Start the first task
@@ -139,7 +139,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
-    double xSpeed = -m_speedLimiter.calculate(-m_driverController.getTurnAxis()) *
+    double xSpeed = -m_speedLimiter.calculate(-m_driverController.getForwardAxis()) *
         Drivetrain.kMaxSpeed;
 
     // // Get the rate of angular rotation. We are inverting this because we want a
@@ -148,7 +148,7 @@ public class Robot extends TimedRobot {
     // // the right by default.
     m_drive.slowMode(m_driverController.getWantsSlowMode());
     m_drive.speedMode(m_driverController.getWantsSpeedMode());
-    double rot = -m_rotLimiter.calculate(-m_driverController.getForwardAxis()) *
+    double rot = -m_rotLimiter.calculate(-m_driverController.getTurnAxis()) *
         Drivetrain.kMaxAngularSpeed;
     m_drive.drive(xSpeed, rot);
 
@@ -160,11 +160,12 @@ public class Robot extends TimedRobot {
     }
 
     // Elevator controls
-    if (m_driverController.getWantsExtend()) {
-      m_elevator.extend();
-    } else if (m_driverController.getWantsRetract()) {
-      m_elevator.retract();
-    } else if (m_operatorController.getWantsExtensionStow()) {
+    // if (m_driverController.getWantsExtend()) {
+    //   m_elevator.extend();
+    // } else if (m_driverController.getWantsRetract()) {
+    //   m_elevator.retract();
+    // }
+    if (m_operatorController.getWantsExtensionStow()) {
       m_elevator.goToExtensionStow();
     } else if (m_operatorController.getWantsExtensionMidGoal()) {
       m_elevator.goToExtensionMidGoal();
