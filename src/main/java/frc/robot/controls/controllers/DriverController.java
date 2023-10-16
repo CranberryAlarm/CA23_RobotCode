@@ -40,19 +40,6 @@ public class DriverController extends FilteredController {
     return this.getRightBumper();
   }
 
-  // Elevator
-  public boolean getWantsExtensionStow() {
-    return this.getRawButton(1);
-  }
-
-  public boolean getWantsExtensionMidGoal() {
-    return this.getRawButton(3);
-  }
-
-  public boolean getWantsExtensionHighGoal() {
-    return this.getRawButton(4);
-  }
-
   public boolean getWantsAutoScore() {
     return this.getRawButton(2);
   }
@@ -78,22 +65,6 @@ public class DriverController extends FilteredController {
 
   public boolean getWantsPivotBoost() {
     return this.getFilteredAxis(2) > kTriggerActivationThreshold;
-  }
-
-  public boolean getWantsGroundPosition() {
-    return this.getPOV() == 180;
-  }
-
-  public boolean getWantsScorePosition() {
-    return this.getPOV() == 90;
-  }
-
-  public boolean getWantsPreGoalPosition() {
-    return this.getPOV() == 270;
-  }
-
-  public boolean getWantsStowPosition() {
-    return this.getPOV() == 0;
   }
 
   // public boolean getWantsRaise() {

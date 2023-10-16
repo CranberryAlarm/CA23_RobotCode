@@ -164,11 +164,11 @@ public class Robot extends TimedRobot {
       m_elevator.extend();
     } else if (m_driverController.getWantsRetract()) {
       m_elevator.retract();
-    } else if (m_driverController.getWantsExtensionStow()) {
+    } else if (m_operatorController.getWantsExtensionStow()) {
       m_elevator.goToExtensionStow();
-    } else if (m_driverController.getWantsExtensionMidGoal()) {
+    } else if (m_operatorController.getWantsExtensionMidGoal()) {
       m_elevator.goToExtensionMidGoal();
-    } else if (m_driverController.getWantsExtensionHighGoal()) {
+    } else if (m_operatorController.getWantsExtensionHighGoal()) {
       m_elevator.goToExtensionHighGoal();
     } else {
       m_elevator.stopExtension();
@@ -182,13 +182,13 @@ public class Robot extends TimedRobot {
     // m_elevator.lower();
     // } else if (m_driverController.getWantsRaise()) {
     // m_elevator.raise();
-    if (m_operatorController.getWantsGroundPosition() || m_driverController.getWantsGroundPosition()) {
+    if (m_operatorController.getWantsGroundPosition()) {
       m_elevator.goToPivotGround();
-    } else if (m_operatorController.getWantsPreGoalPosition() || m_driverController.getWantsPreGoalPosition()) {
+    } else if (m_operatorController.getWantsPreGoalPosition()) {
       m_elevator.goToPivotPreScore();
-    } else if (m_operatorController.getWantsScorePosition() || m_driverController.getWantsScorePosition()) {
+    } else if (m_operatorController.getWantsScorePosition()) {
       m_elevator.goToPivotScore();
-    } else if (m_operatorController.getWantsStowPosition() || m_driverController.getWantsStowPosition()) {
+    } else if (m_operatorController.getWantsStowPosition()) {
       m_elevator.goToPivotStow();
     } else if (m_operatorController.getWantsResetPivotEncoder()) {
       m_elevator.resetPivotEncoder();

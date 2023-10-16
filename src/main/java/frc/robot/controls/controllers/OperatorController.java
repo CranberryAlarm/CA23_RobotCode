@@ -40,6 +40,31 @@ public class OperatorController extends FilteredController {
   public boolean getWantsResetExtensionEncoder() {
     return this.getRawButton(7);
   }
+
+  // public boolean getWantsScorePosition() {
+  //   return this.getPOV() == 90;
+  // }
+
+  // public boolean getWantsPreGoalPosition() {
+  //   return this.getPOV() == 270;
+  // }
+
+  // public boolean getWantsStowPosition() {
+  //   return this.getPOV() == 0;
+  // }
+
+  // Elevator
+  public boolean getWantsExtensionStow() {
+    return this.getPOV() == 0;
+  }
+
+  public boolean getWantsExtensionMidGoal() {
+    return this.getPOV() == 90;
+  }
+
+  public boolean getWantsExtensionHighGoal() {
+    return this.getPOV() == 180;
+  }
 }
 
 // a is pivot up (should be Y)
