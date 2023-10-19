@@ -38,11 +38,11 @@ public class OperatorController extends FilteredController {
   public boolean getWantsExtensionStow() {
     return this.getPOV() == 0;
   }
-  
+
   public boolean getWantsExtensionMidGoal() {
     return this.getPOV() == 90;
   }
-  
+
   public boolean getWantsExtensionHighGoal() {
     return this.getPOV() == 180;
   }
@@ -69,17 +69,17 @@ public class OperatorController extends FilteredController {
   // }
 
   // Elevator
-  public boolean getWantsExtensionStow() {
-    return this.getPOV() == 0;
-  }
+  // public boolean getWantsExtensionStow() {
+  //   return this.getPOV() == 0;
+  // }
 
-  public boolean getWantsExtensionMidGoal() {
-    return this.getPOV() == 90;
-  }
+  // public boolean getWantsExtensionMidGoal() {
+  //   return this.getPOV() == 90;
+  // }
 
-  public boolean getWantsExtensionHighGoal() {
-    return this.getPOV() == 180;
-  }
+  // public boolean getWantsExtensionHighGoal() {
+  //   return this.getPOV() == 180;
+  // }
 }
 
 // a is pivot up (should be Y)
@@ -92,7 +92,7 @@ public class OperatorController extends FilteredController {
 // public boolean getWantsExtend() {
   // return this.getBButton();
   // }
-  
+
   // public boolean getWantsRetract() {
     // return this.getAButton();
 // }
