@@ -67,6 +67,10 @@ public class DriverController extends FilteredController {
     return false;
   }
 
+  public boolean getWantsRehome() {
+    return this.getRawButton(3);
+  }
+
   // public boolean getWantsRaise() {
   // return this.getFilteredAxis(3) > kTriggerActivationThreshold;
   // // return this.getRawButton(2);

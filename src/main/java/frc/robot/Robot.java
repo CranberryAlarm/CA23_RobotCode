@@ -171,6 +171,8 @@ public class Robot extends TimedRobot {
       m_elevator.goToExtensionMidGoal();
     } else if (m_operatorController.getWantsExtensionHighGoal()) {
       m_elevator.goToExtensionHighGoal();
+    } else if (m_driverController.getWantsRehome()) {
+      m_elevator.rehome();
     } else {
       m_elevator.stopExtension();
     }

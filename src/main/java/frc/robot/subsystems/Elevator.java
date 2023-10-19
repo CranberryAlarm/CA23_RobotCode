@@ -163,8 +163,8 @@ public class Elevator extends Subsystem {
     mPeriodicIO.is_pivot_boosted = boost;
   }
 
-  public void home() {
-
+  public void rehome() {
+    mHomeState = 0;
   }
 
   /**
@@ -172,7 +172,7 @@ public class Elevator extends Subsystem {
    * 1 - rehome
    * 2 - homing
    * 3 - homed
-   * 
+   *
    * @param state
    */
   public void setHomingState(int state) {
